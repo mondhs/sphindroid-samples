@@ -1,0 +1,10 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/menu_self_test"
+        android:title="@string/btn_selfTest"/>
+    <item
+        android:id="@+id/menu_reinit"
+        android:title="@string/btn_reinit"/>
+
+</menu>
