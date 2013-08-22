@@ -9,8 +9,10 @@ import org.sphindroid.sample.call.service.SphindroidClientImpl;
 import org.sphindroid.sample.call.service.aidl.AsrContactParcelable;
 import org.sphindroid.sample.call.service.aidl.AsrStatisticsParcelable;
 import org.sphindroid.sample.call.service.aidl.ISphndroidRecognitionCallback;
+import org.sphindroid.sample.call.service.command.HiAsrCommand;
 import org.sphindroid.sample.call.service.command.LightOffCommand;
 import org.sphindroid.sample.call.service.command.LightOnCommand;
+import org.sphindroid.sample.call.service.command.TimeAsrCommand;
 import org.sphindroid.sample.call.service.command.WeatherAsrCommand;
 
 import android.app.Activity;
@@ -18,6 +20,8 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.RemoteException;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -40,7 +44,7 @@ public class CallActivity extends Activity {
 				throws RemoteException {
 			LOG.debug("[onResults] callback {}[{}]",
 					asrStatistics.getHypothesis(),
-					asrStatistics.getHypothesis());
+					asrStatistics.getBestScore());
 			runOnUiThread(new Runnable() {
 				public void run() {
 					updateUIOnResult(asrStatistics.getHypothesis());
@@ -53,9 +57,11 @@ public class CallActivity extends Activity {
 			LOG.debug("[ready] callback");
 			runOnUiThread(new Runnable() {
 				public void run() {
+					findViewById(R.id.btn_start).setEnabled(false);
+					findViewById(R.id.btn_stop).setEnabled(true);
 					findViewById(R.id.btn_listen).setEnabled(true);
-					TextView txtOutput = (TextView) findViewById(R.id.txt_output);
-					txtOutput.setText(getResources().getString(
+					((TextView)findViewById(R.id.txt_output)).setText(
+							getResources().getString(
 							R.string.msg_ready));
 				}
 			});
@@ -80,6 +86,24 @@ public class CallActivity extends Activity {
 		sphindroidClient = new SphindroidClientImpl(getApplicationContext());
 		initUI();
 	}
+	
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+            getMenuInflater().inflate(R.menu.main, menu);
+            return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+            switch (item.getItemId()) {
+            case R.id.menu_command_hi: sphindroidClient.executeCommand(HiAsrCommand.COMMAND_TRANSCRIPTION); break;
+            case R.id.menu_command_time: sphindroidClient.executeCommand(TimeAsrCommand.COMMAND_TRANSCRIPTION); break;
+            case R.id.menu_command_weather: sphindroidClient.executeCommand(WeatherAsrCommand.COMMAND_TRANSCRIPTION); break;
+            default: return super.onOptionsItemSelected(item);
+            }
+            return true;
+    }
+
 
 	@Override
 	protected void onDestroy() {
@@ -126,23 +150,11 @@ public class CallActivity extends Activity {
 			}
 		});
 		Button stopButton = (Button) findViewById(R.id.btn_stop);
+		stopButton.setEnabled(false);
 		stopButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				sphindroidClient.releaseService(callback);
 				sphindroidClient.stopService();
-				updateServiceStatus();
-			}
-		});
-
-		Button btn_invoke = (Button) findViewById(R.id.btn_invoke);
-		btn_invoke.setOnClickListener(new OnClickListener() {
-			public void onClick(View v) {
-
-				// sphindroidClient.executeCommand(NewsCommand.COMMAND_TRANSCRIPTION);
-				// sphindroidClient.executeCommand(HiAsrCommand.COMMAND_TRANSCRIPTION);
-				// sphindroidClient.executeCommand(HiAsrCommand.COMMAND_TRANSCRIPTION);
-				sphindroidClient
-						.executeCommand(WeatherAsrCommand.COMMAND_TRANSCRIPTION);
 				updateServiceStatus();
 			}
 		});
@@ -165,7 +177,12 @@ public class CallActivity extends Activity {
 	private void onBound() {
 		updateContacts(sphindroidClient.findContacts());
 		if (sphindroidClient.isReady()) {
+			findViewById(R.id.btn_start).setEnabled(false);
+			findViewById(R.id.btn_stop).setEnabled(true);
 			findViewById(R.id.btn_listen).setEnabled(true);
+			((TextView)findViewById(R.id.txt_output)).setText(
+					getResources().getString(
+					R.string.msg_ready));
 		}
 		updateServiceStatus();
 	}
