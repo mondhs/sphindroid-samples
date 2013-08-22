@@ -9,7 +9,7 @@ import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.sphindroid.core.service.CoreFactory;
+import org.sphindroid.core.service.SfdCoreFactory;
 import org.sphindroid.core.service.grammar.GenusEnum;
 import org.sphindroid.core.service.grammar.LithuanianGrammarHelperImpl;
 import org.sphindroid.sample.call.service.aidl.AsrCommandParcelable;
@@ -58,7 +58,7 @@ public class TimeAsrCommand extends AbstractTtsAsrCommand {
 	}
 
 	private String createTimeForSpeech(Calendar cal) {
-		LithuanianGrammarHelperImpl grammarHelper = CoreFactory.getInstance().createLithuanianGrammarHelper();
+		LithuanianGrammarHelperImpl grammarHelper = SfdCoreFactory.getInstance().createLithuanianGrammarHelper();
 		int currentHours = cal.get(Calendar.HOUR_OF_DAY);
 		int currentMinutes = cal.get(Calendar.MINUTE);
 		String timeForSpeech = MessageFormat.format("{0} {1} {2} {3}", grammarHelper.resolveNumber(currentHours, GenusEnum.feminine),

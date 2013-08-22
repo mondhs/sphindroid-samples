@@ -4,14 +4,13 @@ import java.util.TimerTask;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.sphindroid.sample.call.MyWidgetIntentReceiver;
 import org.sphindroid.sample.call.service.SphindroidClientImpl;
 
 
 public class ServiceBoundTimerTask extends TimerTask {
 	
 	private static final Logger LOG = LoggerFactory
-			.getLogger(MyWidgetIntentReceiver.class);
+			.getLogger(SphindroidWidgetIntentReceiver.class);
 	
 	private SphindroidClientImpl sphindroidClient;
 

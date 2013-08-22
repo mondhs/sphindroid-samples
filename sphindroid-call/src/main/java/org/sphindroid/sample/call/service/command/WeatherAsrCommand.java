@@ -11,7 +11,7 @@ import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.sphindroid.core.service.CoreFactory;
+import org.sphindroid.core.service.SfdCoreFactory;
 import org.sphindroid.core.service.grammar.GenusEnum;
 import org.sphindroid.core.service.grammar.LithuanianGrammarHelperImpl;
 import org.sphindroid.sample.call.service.aidl.AsrCommandParcelable;
@@ -130,7 +130,7 @@ public class WeatherAsrCommand extends AbstractTtsAsrCommand {
 	}
 
 	private String createWeatherForSpeech(WeatherDto weather) {
-		LithuanianGrammarHelperImpl grammarHelper = CoreFactory.getInstance().createLithuanianGrammarHelper();
+		LithuanianGrammarHelperImpl grammarHelper = SfdCoreFactory.getInstance().createLithuanianGrammarHelper();
 		String rtn = MessageFormat.format("{0}, {1} {2}", resolveWeatherMap.get(weather.code), 
 				grammarHelper.resolveNumber(weather.temperature, GenusEnum.masculine).toUpperCase(), 
 				grammarHelper.matchNounToNumerales(weather.temperature, "laipsnis") 

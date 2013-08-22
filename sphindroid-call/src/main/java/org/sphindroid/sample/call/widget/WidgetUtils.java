@@ -1,4 +1,4 @@
-package org.sphindroid.sample.call;
+package org.sphindroid.sample.call.widget;
 
 public class WidgetUtils {
 

@@ -1,11 +1,11 @@
-package org.sphindroid.sample.call;
+package org.sphindroid.sample.call.widget;
 
 import java.util.Timer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.sphindroid.sample.call.R;
 import org.sphindroid.sample.call.service.SphindroidClientImpl;
-import org.sphindroid.sample.call.widget.ServiceBoundTimerTask;
 
 import android.app.PendingIntent;
 import android.app.Service;
@@ -17,11 +17,11 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.widget.RemoteViews;
 
-public class MyWidgetIntentReceiver extends BroadcastReceiver {
+public class SphindroidWidgetIntentReceiver extends BroadcastReceiver {
 	public static int clickCount = 0;
 
 	private static final Logger LOG = LoggerFactory
-			.getLogger(MyWidgetIntentReceiver.class);
+			.getLogger(SphindroidWidgetIntentReceiver.class);
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
@@ -36,7 +36,7 @@ public class MyWidgetIntentReceiver extends BroadcastReceiver {
 
 	private void updateWidgetPictureAndButtonListener(Context context) {
 		RemoteViews remoteViews = new RemoteViews(context.getPackageName(),
-				R.layout.widgetsimple_layout);
+				R.layout.sphindroid_widget_layout);
 		// updating view
 
 		// re-registering for click listener
@@ -56,7 +56,7 @@ public class MyWidgetIntentReceiver extends BroadcastReceiver {
 
 	private void pushWidgetUpdate(Context context, RemoteViews remoteViews) {
 		ComponentName myWidget = new ComponentName(context,
-				MyWidgetProviderSimple.class);
+				SphindroidWidgetProvider.class);
 		AppWidgetManager manager = AppWidgetManager.getInstance(context);
 		manager.updateAppWidget(myWidget, remoteViews);
 	}
@@ -73,7 +73,7 @@ public class MyWidgetIntentReceiver extends BroadcastReceiver {
 
 			// Push update for this widget to the home screen
 			ComponentName thisWidget = new ComponentName(this,
-					MyWidgetProviderSimple.class);
+					SphindroidWidgetProvider.class);
 			AppWidgetManager manager = AppWidgetManager.getInstance(this);
 			manager.updateAppWidget(thisWidget, updateViews);
 		}
@@ -81,7 +81,7 @@ public class MyWidgetIntentReceiver extends BroadcastReceiver {
 		public RemoteViews buildUpdate(Context context) {
 			LOG.debug("InvokeService$buildUpdate");
 			RemoteViews updateViews = new RemoteViews(context.getPackageName(),
-					R.layout.widgetsimple_layout);
+					R.layout.sphindroid_widget_layout);
 
 			SphindroidClientImpl sphindroidClient = new SphindroidClientImpl(
 					context);

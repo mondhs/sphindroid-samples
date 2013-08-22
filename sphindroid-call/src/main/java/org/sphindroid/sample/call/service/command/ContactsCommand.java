@@ -8,7 +8,7 @@ import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.sphindroid.core.service.CoreFactory;
+import org.sphindroid.core.service.SfdCoreFactory;
 import org.sphindroid.sample.call.dto.AsrContact;
 import org.sphindroid.sample.call.service.AsrContantDaoImpl;
 import org.sphindroid.sample.call.service.aidl.AsrCommandParcelable;
@@ -85,7 +85,7 @@ public class ContactsCommand extends AbstractAsrCommand {
 			}
 		}
 		nick  = nick.toUpperCase();
-		return CoreFactory.getInstance().createLithuanianGrammarHelper().makeNounInDativeCase(nick);
+		return SfdCoreFactory.getInstance().createLithuanianGrammarHelper().makeNounInDativeCase(nick);
 	}
 	
 	@Override

@@ -12,7 +12,7 @@
         android:layout_gravity="center"
         android:layout_margin="4dip"
         android:gravity="center_horizontal|center_vertical"
-        android:text="Test" />
+        android:text="@string/btn_widget_listen" />
 
 
 </LinearLayout>
