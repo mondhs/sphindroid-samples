@@ -1,2 +1,37 @@
 language: java
 jdk: openjdk6
+env:
+    matrix:
+    #- ANDROID_SDKS=android-8            ANDROID_TARGET=android-8   ANDROID_ABI=armeabi
+    - ANDROID_SDKS=android-10           ANDROID_TARGET=android-10  ANDROID_ABI=armeabi
+    #- ANDROID_SDKS=sysimg-16            ANDROID_TARGET=android-16  ANDROID_ABI=armeabi-v7a
+    #- ANDROID_SDKS=android-17,sysimg-17 ANDROID_TARGET=android-17  ANDROID_ABI=armeabi-v7a
+before_install:
+    # Install base Android SDK
+    - sudo apt-get update -qq
+    - if [ `uname -m` = x86_64 ]; then sudo apt-get install -qq --force-yes libgd2-xpm ia32-libs ia32-libs-multiarch > /dev/null; fi
+    - wget http://dl.google.com/android/android-sdk_r21.0.1-linux.tgz
+    - tar xzf android-sdk_r21.0.1-linux.tgz
+    - export ANDROID_HOME=$PWD/android-sdk-linux
+    - export PATH=${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools
+
+    # Install required Android components.
+    - android update sdk --filter platform-tools,android-16,extra-android-support,$ANDROID_SDKS --no-ui --force > /dev/null
+
+    # Create and start emulator
+    - echo no | android create avd --force -n sphindroid-emulator -t $ANDROID_TARGET --abi $ANDROID_ABI -c 20M
+    - emulator -avd sphindroid-emulator -no-skin -no-audio -no-window &
+
+before_script:
+    # Make sure the emulator has started before running tests
+    - cd /home/travis/build/mondhs/sphindroid-core/scripts
+    - ./wait_for_emulator.sh
+    - cd ..
+
+after_failure:   
+    - cd sphindroid-app-tests 
+    - mvn android:pull -Dandroid.pull.source=/mnt/sdcard/Android/data/org.sphindroid.service.impl/files/pocketsphinx.log -Dandroid.pull.destination=./target/pocketsphinx.log
+    - cat ./target/pocketsphinx.log
+    - cd ..
+
+script: mvn install -Pintegration-tests -Dandroid.device=sphindroid-emulator
