@@ -45,11 +45,11 @@ public class NewsCommand extends AbstractAsrCommand {
 
 
 	@Override
-	public boolean execute(AsrCommandParcelable commandDto) {
-		Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.delfi.lt"));
+	public AsrCommandResult execute(AsrCommandParcelable commandDto) {
+		Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://m.delfi.lt"));
 		browserIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		getContext().startActivity(browserIntent);
-		return true;
+		return new AsrCommandResult(true);
 	}
 	
 

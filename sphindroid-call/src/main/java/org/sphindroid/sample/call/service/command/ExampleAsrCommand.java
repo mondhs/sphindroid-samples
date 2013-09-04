@@ -53,9 +53,9 @@ public class ExampleAsrCommand extends AbstractAsrCommand  {
 	}
 
 	@Override
-	public boolean execute(AsrCommandParcelable commandDto) {
+	public AsrCommandResult execute(AsrCommandParcelable commandDto) {
 		LOG.debug("[execute] {}", commandDto.getCommandName());
-		return true;
+		return new AsrCommandResult(true);
 	}
 
 }

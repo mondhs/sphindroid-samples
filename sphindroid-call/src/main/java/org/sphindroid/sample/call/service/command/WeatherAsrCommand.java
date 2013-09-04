@@ -108,10 +108,10 @@ public class WeatherAsrCommand extends AbstractTtsAsrCommand {
 	}
 
 	@Override
-	public boolean execute(AsrCommandParcelable commandDto) {
+	public AsrCommandResult execute(AsrCommandParcelable commandDto) {
 		String weatherForSpeech = createWeatherForSpeech();
 		LOG.debug("[execute] {}", weatherForSpeech);
-		return speak(weatherForSpeech);
+		return new AsrCommandResult(speak(weatherForSpeech));
 	}
 
 	private String createWeatherForSpeech() {

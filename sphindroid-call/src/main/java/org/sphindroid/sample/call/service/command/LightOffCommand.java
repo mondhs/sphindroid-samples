@@ -43,8 +43,8 @@ public class LightOffCommand extends AbstractAsrCommand{
 
 
 	@Override
-	public boolean execute(AsrCommandParcelable commandDto) {
-		return true;
+	public AsrCommandResult execute(AsrCommandParcelable commandDto) {
+		return new AsrCommandResult(true);
 	}
 	
 

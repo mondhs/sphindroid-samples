@@ -3,12 +3,11 @@ package org.sphindroid.sample.call.dto;
 import android.net.Uri;
 
 public class AsrContact {
-	String displayName;
+	private String displayName;
 	private String number;
 	private String givenName;
 	private String familyName;
 	private Long id;
-	private String keyword;
 	private Uri avatar;
 
 	public void setNumber(String number) {
@@ -51,13 +50,6 @@ public class AsrContact {
 		return id;
 	}
 
-	public void setKeyword(String keyword) {
-		this.keyword = keyword;
-	}
-
-	public String getKeyword() {
-		return keyword;
-	}
 
 	public void setAvatar(Uri avatar) {
 		this.avatar = avatar;

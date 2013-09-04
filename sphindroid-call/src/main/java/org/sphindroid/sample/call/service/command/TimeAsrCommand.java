@@ -51,10 +51,10 @@ public class TimeAsrCommand extends AbstractTtsAsrCommand {
 	}
 
 	@Override
-	public boolean execute(AsrCommandParcelable commandDto) {
+	public AsrCommandResult execute(AsrCommandParcelable commandDto) {
 		Calendar cal = Calendar.getInstance();
 		speak(createTimeForSpeech(cal));
-		return true;
+		return new AsrCommandResult(true);
 	}
 
 	private String createTimeForSpeech(Calendar cal) {

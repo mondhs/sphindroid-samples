@@ -5,17 +5,23 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sphindroid.sample.call.service.aidl.AsrCommandParcelable;
 
 import android.content.Context;
 
-public class LightOnCommand extends AbstractAsrCommand{
-	private static final String KEY_COMMAND = "TURN_LIGHT_ON";
-	public static final String COMMAND_TRANSCRIPTION = "ĮJUNK ŠVIESĄ";
+public class HowdyAsrCommand extends AbstractTtsAsrCommand{
+	private static final Logger LOG = LoggerFactory.getLogger(HowdyAsrCommand.class); 
+	
+	private static final String KEY_COMMAND_HI = "HOW_ARE_YOU";
+	public static final String COMMAND_TRANSCRIPTION = "KAIP SEKASI";
 
-	public LightOnCommand(Context context) {
+
+	public HowdyAsrCommand(Context context) {
 		super(context);
 	}
+
 
 	@Override
 	public boolean isSupports(AsrCommandParcelable commandDto) {
@@ -33,18 +39,16 @@ public class LightOnCommand extends AbstractAsrCommand{
 	}
 
 	@Override
-	public Map<String,String> getCommandMap() {
-		Map<String,String> cmdMap= new HashMap<String,String>();
-		cmdMap.put(KEY_COMMAND, COMMAND_TRANSCRIPTION);
+	public Map<String, String> getCommandMap() {
+		Map<String, String> cmdMap = new HashMap<String, String>();
+		cmdMap.put(KEY_COMMAND_HI, COMMAND_TRANSCRIPTION);
 		return cmdMap;
 	}
 
-
-
 	@Override
 	public AsrCommandResult execute(AsrCommandParcelable commandDto) {
-		return new AsrCommandResult(true);
+		LOG.debug("[execute] {}", COMMAND_TRANSCRIPTION);
+		return new AsrCommandResult(speak("Gerai! Kaip tau?"));
 	}
-	
 
 }

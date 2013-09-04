@@ -9,6 +9,7 @@ import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.sphindroid.core.service.AsrAssert;
 import org.sphindroid.core.service.SphindroidResrouceHelper;
 import org.sphindroid.core.service.impl.GraphemeToPhonemeMapperLithuanianImpl;
 import org.sphindroid.lib.async.SphindroidRecognizer;
@@ -21,8 +22,10 @@ import org.sphindroid.sample.call.service.CallGrammarBuilderLithuanianImpl;
 import org.sphindroid.sample.call.service.CallRecognitionListener;
 import org.sphindroid.sample.call.service.command.AsrCommandProcessor;
 import org.sphindroid.sample.call.service.command.AsrCommandResolver;
+import org.sphindroid.sample.call.service.command.AsrCommandResult;
 import org.sphindroid.sample.call.service.command.ContactsCommand;
 import org.sphindroid.sample.call.service.command.HiAsrCommand;
+import org.sphindroid.sample.call.service.command.HowdyAsrCommand;
 import org.sphindroid.sample.call.service.command.LightOffCommand;
 import org.sphindroid.sample.call.service.command.LightOnCommand;
 import org.sphindroid.sample.call.service.command.NewsCommand;
@@ -120,6 +123,8 @@ public class SphindroidService extends Service {
 
 		@Override
 		public List<AsrContactParcelable> findContacts() throws RemoteException {
+			AsrAssert.isNotNull(grammarBuilder, "GrammarBuilder cannot be null");
+			AsrAssert.isNotNull(grammarBuilder.getAsrContantService(), "AsrContantService cannot be null");
 			List<AsrContact> asrContacts = grammarBuilder.getAsrContantService().findContacts();
 			List<AsrContactParcelable> rtn = new ArrayList<AsrContactParcelable>();
 			for (AsrContact asrContact : asrContacts) {
@@ -238,6 +243,7 @@ public class SphindroidService extends Service {
 	private Set<AsrCommandProcessor> createCommandCollection(AsrContantDaoImpl aContantService) {
 		Set<AsrCommandProcessor> commands = new LinkedHashSet<AsrCommandProcessor>();
 		commands.add(new HiAsrCommand(getApplicationContext()));
+		commands.add(new HowdyAsrCommand(getApplicationContext()));
 		commands.add(new TimeAsrCommand(getApplicationContext()));
 		commands.add(new WeatherAsrCommand(getApplicationContext()));
 		commands.add(new LightOnCommand(getApplicationContext()));
@@ -264,8 +270,9 @@ public class SphindroidService extends Service {
 	
 	private String processExecuteCommand(AsrCommandParcelable commandDto) {
 		String cmd = commandDto.getCommandName();
-		boolean isProcessed =commandResolver.execute(commandDto);
-		if(!isProcessed){
+		LOG.debug("[processExecuteCommand]: {}", cmd);
+		AsrCommandResult result = commandResolver.execute(commandDto);
+		if(!Boolean.TRUE.equals(result.getConsumed())){
 			Toast.makeText(getApplicationContext(),
 					"Kas yra " +  cmd + "?", Toast.LENGTH_SHORT)
 					.show();

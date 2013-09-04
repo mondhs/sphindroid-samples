@@ -174,6 +174,7 @@ public class SphindroidClientImpl {
 	}
 
 	public void executeCommand(String commandName) {
+		LOG.debug("[executeCommand]{}", commandName);
 		AsrCommandParcelable command = new AsrCommandParcelable();
 		command.setCommandName(commandName);
 		executeCommand(command);

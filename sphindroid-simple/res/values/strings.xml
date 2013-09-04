@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Sphindroid ItApp</string>
+    <string name="app_name">Kalkbėk SFD</string>
     <string name="btn_listen">Listen</string>
     <string name="action_settings">Settings</string>    
     <string name="btn_selfTest">Self Test</string>

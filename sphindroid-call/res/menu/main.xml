@@ -9,6 +9,9 @@
                 android:id="@+id/menu_command_hi"
                 android:title="@string/menu_command_hi"/>
             <item
+                android:id="@+id/menu_command_howdy"
+                android:title="@string/menu_command_howdy"/>
+            <item
                 android:id="@+id/menu_command_weather"
                 android:title="@string/menu_command_weather"/>
             <item

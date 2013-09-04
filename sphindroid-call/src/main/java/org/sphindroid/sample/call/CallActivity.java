@@ -10,6 +10,7 @@ import org.sphindroid.sample.call.service.aidl.AsrContactParcelable;
 import org.sphindroid.sample.call.service.aidl.AsrStatisticsParcelable;
 import org.sphindroid.sample.call.service.aidl.ISphndroidRecognitionCallback;
 import org.sphindroid.sample.call.service.command.HiAsrCommand;
+import org.sphindroid.sample.call.service.command.HowdyAsrCommand;
 import org.sphindroid.sample.call.service.command.LightOffCommand;
 import org.sphindroid.sample.call.service.command.LightOnCommand;
 import org.sphindroid.sample.call.service.command.TimeAsrCommand;
@@ -97,8 +98,10 @@ public class CallActivity extends Activity {
     public boolean onOptionsItemSelected(MenuItem item) {
             switch (item.getItemId()) {
             case R.id.menu_command_hi: sphindroidClient.executeCommand(HiAsrCommand.COMMAND_TRANSCRIPTION); break;
+            case R.id.menu_command_howdy: sphindroidClient.executeCommand(HowdyAsrCommand.COMMAND_TRANSCRIPTION); break;
             case R.id.menu_command_time: sphindroidClient.executeCommand(TimeAsrCommand.COMMAND_TRANSCRIPTION); break;
             case R.id.menu_command_weather: sphindroidClient.executeCommand(WeatherAsrCommand.COMMAND_TRANSCRIPTION); break;
+//            case R.id.menu_test: startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("content://contacts/people/"))); break;
             default: return super.onOptionsItemSelected(item);
             }
             return true;

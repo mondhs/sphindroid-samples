@@ -48,17 +48,19 @@ public class AsrCommandResolver implements AsrCommandProcessor {
 	}
 
 	@Override
-	public boolean execute(AsrCommandParcelable commandDto) {
+	public AsrCommandResult execute(AsrCommandParcelable commandDto) {
 		boolean isProcessed = false;
 		for (AsrCommandProcessor command : commands) {
 			if(command.isSupports(commandDto)){
-				if(command.execute(commandDto)){
+				LOG.debug("Prepared to executed {}", commandDto.getCommandName());
+				AsrCommandResult result =command.execute(commandDto); 
+				if(Boolean.TRUE.equals(result.getConsumed())){
 					isProcessed = true;
 					LOG.debug("Command executed successfully {}", commandDto.getCommandName());
 				}
 			}
 		}
-		return isProcessed;	
+		return new AsrCommandResult(isProcessed);	
 	}
 
 }

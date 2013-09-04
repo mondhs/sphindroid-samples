@@ -10,5 +10,5 @@ public interface AsrCommandProcessor {
 	Set<String> getDictionary();
 	Map<String,String> getCommandMap();
 	Map<String,String> getAditionalGrammarMap();
-	boolean execute(AsrCommandParcelable cmd);
+	AsrCommandResult execute(AsrCommandParcelable cmd);
 }

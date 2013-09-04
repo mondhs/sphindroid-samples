@@ -1,9 +1,11 @@
 package org.sphindroid.sample.call.service;
 
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.sphindroid.sample.call.dto.AsrContact;
+import org.sphindroid.sample.call.dto.AsrContactMatch;
 
 import android.content.ContentResolver;
 import android.content.ContentUris;
@@ -68,20 +70,34 @@ public class AsrContantDaoImpl {
 	 * @param contactId
 	 * @return
 	 */
-	public List<AsrContact> findContactByGivenNameOrFamilyName(String name) {
+	public Collection<AsrContactMatch> findContactGivenOrFamilyNameStartsWith(String name) {
+		String aName = name.toUpperCase();
 		List<AsrContact> contancts = contactsCached;
-		List<AsrContact> rtn = new LinkedList<AsrContact>();
+		List<AsrContactMatch> rtn = new LinkedList<AsrContactMatch>();
 		if(contancts != null){
 			contancts = findContacts();
 		}
 		for (AsrContact asrContact : contancts) {
-			if(asrContact.getGivenName().equals(name) || asrContact.getFamilyName().equals(name)){
-				rtn.add(asrContact);
+			String given = asrContact.getGivenName();
+			String family= asrContact.getFamilyName();
+			if(safeUpperStartWith(given, aName)){
+				rtn.add(new AsrContactMatch(asrContact, family));
+			}else if(safeUpperStartWith(family,aName)){
+				rtn.add(new AsrContactMatch(asrContact, given));
 			}
 		}
 		return rtn;
 	}
 	
+	private boolean safeUpperStartWith(String  expectedNalbleName, String startWithUpperName) {
+		if(expectedNalbleName == null && startWithUpperName == null){
+			return true;
+		}else if(expectedNalbleName == null || startWithUpperName == null){
+			return false;
+		}else{
+			return expectedNalbleName.toUpperCase().startsWith(startWithUpperName);
+		}
+	}
 	/**
 	 * 
 	 * @param people
@@ -157,7 +173,6 @@ public class AsrContantDaoImpl {
 		if (people.moveToNext()) {
 			asrContact.setFamilyName(people.getString(indexFamilyName));
 			asrContact.setGivenName(people.getString(indexGivenName));
-			asrContact.setKeyword(asrContact.getGivenName().toUpperCase());
 		}
 
 		people.close();

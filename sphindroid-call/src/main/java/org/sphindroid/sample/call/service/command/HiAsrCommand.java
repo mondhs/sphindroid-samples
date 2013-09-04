@@ -43,9 +43,9 @@ public class HiAsrCommand extends AbstractTtsAsrCommand{
 	}
 
 	@Override
-	public boolean execute(AsrCommandParcelable commandDto) {
+	public AsrCommandResult execute(AsrCommandParcelable commandDto) {
 		LOG.debug("[execute] {}", COMMAND_TRANSCRIPTION);
-		return speak(COMMAND_TRANSCRIPTION);
+		return new AsrCommandResult(speak(COMMAND_TRANSCRIPTION));
 	}
 
 }

@@ -3,6 +3,7 @@
     <string name="msg_warm">Sphindroid pasiruošęs, spauskite Užsikurk</string>
     <string name="msg_booting">Sphindroid kraunasi. Palaukite</string>
     <string name="msg_ready">Sphindroid pasiruošęs. Spausykite klausyti klavišą ir tark žodį.</string>
+    <string name="app_name">SFD Komanduok</string>
     <string name="lbl_listen">Klausyk</string>
     <string name="lbl_init">Pradedam</string>
     <string name="lbl_contanctAvatar">Avataras</string>

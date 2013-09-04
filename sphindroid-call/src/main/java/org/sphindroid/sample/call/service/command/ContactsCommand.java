@@ -3,13 +3,16 @@ package org.sphindroid.sample.call.service.command;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sphindroid.core.service.SfdCoreFactory;
+import org.sphindroid.core.service.grammar.LithuanianGrammarHelperImpl;
 import org.sphindroid.sample.call.dto.AsrContact;
+import org.sphindroid.sample.call.dto.AsrContactMatch;
 import org.sphindroid.sample.call.service.AsrContantDaoImpl;
 import org.sphindroid.sample.call.service.aidl.AsrCommandParcelable;
 
@@ -17,7 +20,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 
-public class ContactsCommand extends AbstractAsrCommand {
+public class ContactsCommand extends AbstractTtsAsrCommand {
 	private static final Logger LOG= LoggerFactory.getLogger(ContactsCommand.class);
 	
 	public static final String KEY_COMMAND = "SKAMBINK";
@@ -39,9 +42,7 @@ public class ContactsCommand extends AbstractAsrCommand {
 	public Set<String> getDictionary() {
 		Set<String> dictionary = new HashSet<String>();
 		dictionary.add(KEY_COMMAND);
-		for (AsrContact contact : asrContantService.findContacts()) {
-			dictionary.add(createNicknameInDativeCase(contact));
-		}
+		dictionary.addAll(createNamesDative(asrContantService.findContacts()));
 		return dictionary;
 	}
 
@@ -64,53 +65,82 @@ public class ContactsCommand extends AbstractAsrCommand {
 	public StringBuilder createContactsRepresentation(Collection<AsrContact> aContacts) {
         String separator = "";
         StringBuilder sb = new StringBuilder();
-		for (AsrContact contact : aContacts) {
-
-        	sb.append(separator).append(createNicknameInDativeCase(contact));
-        	separator = " | ";
-        }
+        Set<String> nameDative = createNamesDative(aContacts);
+		for (String name : nameDative) {
+			sb.append(separator).append(name);
+			separator = " | ";
+		}
         return sb;
 	}
 
 
-	private String createNicknameInDativeCase(AsrContact contact) {
-		String nick = contact.getKeyword();
-		if(nick == null){
-			nick = contact.getFamilyName();
-		}
-		if(nick == null){
-			String[] nameArr = contact.getDisplayName().split(" ");
-			if(nameArr!=null && nameArr.length >2){
-				nick = nameArr[nameArr.length-1];
+	private Set<String> createNamesDative(Collection<AsrContact> aContacts) {
+		Set<String> names = new HashSet<String>();
+        LithuanianGrammarHelperImpl grammarHelper = SfdCoreFactory.getInstance().createLithuanianGrammarHelper();
+		for (AsrContact contact : aContacts) {
+			names.add(contact.getFamilyName());
+			names.add(contact.getGivenName());
+        }
+		Set<String> nameDativeSet = new HashSet<String>();
+		for (String name : names) {
+			if(name == null){
+				continue;
+			}
+			String nameDative = grammarHelper.makeNounToDat(name.toUpperCase());
+			if(nameDative !=null){
+				nameDativeSet.add(nameDative);
 			}
 		}
-		nick  = nick.toUpperCase();
-		return SfdCoreFactory.getInstance().createLithuanianGrammarHelper().makeNounInDativeCase(nick);
+		return nameDativeSet;
 	}
-	
+
 	@Override
-	public boolean execute(AsrCommandParcelable cmd) {
+	public AsrCommandResult execute(AsrCommandParcelable cmd) {
 			AsrContact contact = asrContantService.findContactById(cmd.getId());
-			LOG.debug("callContact1({})", contact);
+			LOG.debug("callContact by id ({})", contact);
 			if(contact == null){
-				String callName = cmd.getCommandName();
-				callName = callName.replaceAll(KEY_COMMAND, "");
-				callName = callName.replace(" ", "");
-				for (AsrContact iContact : asrContantService.findContacts()) {
-					if(createNicknameInDativeCase(iContact).toUpperCase().contains(callName)){
-						contact = iContact;
-						break;
-					}
-				}
+				contact = findByName(cmd.getCommandName());
 			}
-			LOG.debug("callContact2({})", contact);
+			LOG.debug("callContact by name ({})", contact);
 			if(contact != null){
 				Intent intent = new Intent(Intent.ACTION_CALL);
 				intent.setData(Uri.parse("tel:" + contact.getNumber()));
 				intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 				getContext().startActivity(intent);
+				return new AsrCommandResult(true);
 			}
-		return true;
+		return new AsrCommandResult(false);
+	}
+
+	private AsrContact findByName(String commandName) {
+		AsrContact contact = null;
+		LithuanianGrammarHelperImpl grammarHelper = SfdCoreFactory.getInstance().createLithuanianGrammarHelper();
+		String callName = commandName;
+		callName = callName.replaceAll(KEY_COMMAND, "");
+		callName = callName.replace(" ", "");
+		String nameRoot = grammarHelper.stripDatEnding(callName);
+		Collection<AsrContactMatch> contancts = asrContantService.findContactGivenOrFamilyNameStartsWith(nameRoot);
+		if(contancts.size()==1){
+			contact = contancts.iterator().next().getAsrContact();
+		}else if(contancts.size()==2){
+			LOG.error("[execute] multiple contanct availbe fo for {}", commandName);
+			StringBuilder speakMsg = new StringBuilder();
+			speakMsg.append("Kuris ");
+			String separator = "";
+			for (AsrContactMatch asrContactMatch : contancts) {
+				speakMsg.append(separator);
+				speakMsg.append(asrContactMatch.getDetailedName());
+				separator  = " ar ";
+			}
+			speak(speakMsg.toString());
+		}else if(contancts.size()>2){
+			speak("Radau "+contancts.size()+ " " +callName);
+		}else{//contancts.size()==0
+			LOG.debug("[execute] contanct for {}. not found", commandName);
+			speak("Nerandu " + commandName);
+		}
+		return contact;
+		
 	}
 
 }

@@ -17,7 +17,6 @@ public abstract class AbstractTtsAsrCommand extends AbstractAsrCommand implement
 	public AbstractTtsAsrCommand(Context context) {
 		super(context);
 		tts = new TextToSpeech(context, this);
-//		tts.setEngineByPackageName(enginePackageName)
 	}
 
 	/**
