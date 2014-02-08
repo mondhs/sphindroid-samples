@@ -6,7 +6,7 @@ import org.sphindroid.core.dto.AsrStatistics;
 import org.sphindroid.core.dto.RecognitionContext;
 import org.sphindroid.core.service.AsrMessagePublisher;
 import org.sphindroid.core.service.AsrRecognitionListener;
-import org.sphindroid.core.service.SphindroidResrouceHelper;
+import org.sphindroid.core.service.SphindroidResourceHelper;
 import org.sphindroid.lib.async.AsrRecordAudioTaskImpl;
 import org.sphindroid.lib.async.AsrWavAudioTaskImpl;
 import org.sphindroid.lib.async.SphindroidRecognizer;
@@ -28,7 +28,7 @@ public class SimpleActivity extends Activity {
 		System.loadLibrary("pocketsphinx_jni");
 	}
 
-	private SphindroidResrouceHelper sphindroidResrouceHelper;
+	private SphindroidResourceHelper sphindroidResourceHelper;
 	private SphindroidRecognizer sphindroidRecognizer;
 	private SimpleAsrMessagePublisher messagePublisher; 
 
@@ -38,7 +38,7 @@ public class SimpleActivity extends Activity {
 		setContentView(R.layout.activity_main);
 		messagePublisher = new SimpleAsrMessagePublisher();
 		SphindroidFactory factory = SphindroidFactory.getInstance();
-		sphindroidResrouceHelper = factory
+		sphindroidResourceHelper = factory
 				.createSphindroidResrouceHelper(this);
 		SphindroidFactory.getInstance().changeAsrMessagePublisher(messagePublisher);
 		//add action handlers for button
@@ -50,7 +50,7 @@ public class SimpleActivity extends Activity {
 
 	@Override
 	protected void onDestroy() {
-		sphindroidResrouceHelper.cleanUp(sphindroidRecognizer.getCtx());
+		sphindroidResourceHelper.cleanUp(sphindroidRecognizer.getCtx());
 		super.onDestroy();
 
 	}
@@ -103,8 +103,7 @@ public class SimpleActivity extends Activity {
 	}
 
 	/**
-	 * @param acousticModelCode
-	 * 
+	 *
 	 */
 	private void initSphinxdroid() {
 		SphindroidFactory factory = SphindroidFactory.getInstance();
@@ -153,7 +152,7 @@ public class SimpleActivity extends Activity {
 		public void ready() {
 
 			messagePublisher.publishMessage("Ready: ");
-			StringBuilder content = sphindroidResrouceHelper.readFromFile(sphindroidRecognizer.getCtx()
+			StringBuilder content = sphindroidResourceHelper.readFromFile(sphindroidRecognizer.getCtx()
 					.getFileJsgf());
 			messagePublisher.publishMessage(content.toString());
 

@@ -1,1 +1,9 @@
 target/
+.settings/
+.gradle/
+gradle/
+.idea/
+build/
+*.iml
+bin
+gen
