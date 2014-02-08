@@ -67,7 +67,7 @@ public class AsrContantDaoImpl {
 	
 	/**
 	 * 
-	 * @param contactId
+	 * @param name
 	 * @return
 	 */
 	public Collection<AsrContactMatch> findContactGivenOrFamilyNameStartsWith(String name) {
