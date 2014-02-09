@@ -27,7 +27,7 @@ public class SphindroidWidgetIntentReceiver extends BroadcastReceiver {
 	public void onReceive(Context context, Intent intent) {
 		LOG.debug("[onReceive] {}", intent.getAction());
 
-		if (intent.getAction().equals(WidgetUtils.WIDGET_SWICH_ACTION)) {
+		if (intent.getAction().equals(WidgetUtils.WIDGET_SWITCH_ACTION)) {
 			context.startService(new Intent(context, InvokeService.class));
 			updateWidgetPictureAndButtonListener(context);
 
@@ -49,7 +49,7 @@ public class SphindroidWidgetIntentReceiver extends BroadcastReceiver {
 	private PendingIntent buildButtonPendingIntent(Context context) {
 		// initiate widget update request
 		Intent intent = new Intent();
-		intent.setAction(WidgetUtils.WIDGET_SWICH_ACTION);
+		intent.setAction(WidgetUtils.WIDGET_SWITCH_ACTION);
 		return PendingIntent.getBroadcast(context, 0, intent,
 				PendingIntent.FLAG_UPDATE_CURRENT);
 	}

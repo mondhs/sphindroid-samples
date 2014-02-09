@@ -30,7 +30,7 @@ public class CallRemoteServiceConnection implements ServiceConnection {
 	public void onServiceConnected(ComponentName className,
 			IBinder boundService) {
 		remoteService = ISphndroidRemoteService.Stub
-				.asInterface((IBinder) boundService);
+				.asInterface(boundService);
 		if(callback != null){
 			try {
 				remoteService.registerCallBack(callback);

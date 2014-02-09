@@ -41,7 +41,7 @@ public class SphindroidWidgetProvider extends AppWidgetProvider {
     private PendingIntent buildButtonPendingIntent(Context context) {
         // initiate widget update request
         Intent intent = new Intent();
-        intent.setAction(WidgetUtils.WIDGET_SWICH_ACTION);
+        intent.setAction(WidgetUtils.WIDGET_SWITCH_ACTION);
         return PendingIntent.getBroadcast(context, 0, intent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
     }

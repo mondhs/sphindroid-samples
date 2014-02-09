@@ -10,7 +10,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sphindroid.core.service.AsrAssert;
-import org.sphindroid.core.service.SphindroidResrouceHelper;
+import org.sphindroid.core.service.SphindroidResourceHelper;
 import org.sphindroid.core.service.impl.GraphemeToPhonemeMapperLithuanianImpl;
 import org.sphindroid.lib.async.SphindroidRecognizer;
 import org.sphindroid.lib.service.SphindroidFactory;
@@ -54,7 +54,7 @@ public class SphindroidService extends Service {
 	
 	private NotificationManager nm;
 	private SphindroidRecognizer sphindroidRecognizer;
-	private SphindroidResrouceHelper sphindroidResrouceHelper;
+	private SphindroidResourceHelper sphindroidResrouceHelper;
 	private CallRecognitionListener callRecognitionListener;
 	private Notification notification;
 	private AsrCommandResolver commandResolver;

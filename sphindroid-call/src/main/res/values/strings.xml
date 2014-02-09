@@ -19,4 +19,5 @@
     <string name="menu_command_howdy">Kaip sekasi?</string>
     <string name="menu_command_weather">Koks oras?</string>
     <string name="menu_command_time">Kiek valandų?</string>
+
 </resources>

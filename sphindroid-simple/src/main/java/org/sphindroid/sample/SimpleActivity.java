@@ -158,7 +158,7 @@ public class SimpleActivity extends Activity {
 
 			runOnUiThread(new Runnable() {
 				public void run() {
-					((Button) findViewById(R.id.btnListen)).setEnabled(true);
+					findViewById(R.id.btnListen).setEnabled(true);
 				}
 			});
 
