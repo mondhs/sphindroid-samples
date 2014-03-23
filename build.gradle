@@ -3,9 +3,9 @@
 buildscript {
     repositories {
         mavenCentral()
-	mavenLocal()
+	    mavenLocal()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.8.+'
+        classpath 'com.android.tools.build:gradle:0.9.+'
     }
 }

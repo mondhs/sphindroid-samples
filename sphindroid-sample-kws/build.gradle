@@ -1,0 +1,36 @@
+apply plugin: 'android'
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    maven {
+        url "http://repo2.maven.org/maven2"
+    }
+    maven {
+        url "http://repository-spantus.forge.cloudbees.com/release/"
+    }
+    maven {
+        url "http://repository-spantus.forge.cloudbees.com/snapshot/"
+    }
+}
+
+dependencies {
+    compile ('edu.cmu.pocketsphinx:pocketsphinx-android:0.8.1-SNAPSHOT')
+    compile ('org.sphindroid.model:sphindroid-am-lt_lt:0.2-SNAPSHOT@aar')
+    androidTestCompile 'com.jayway.android.robotium:robotium-solo:4.3.1'
+}
+
+
+android {
+    compileSdkVersion 19
+    buildToolsVersion "19.0.1"
+
+    defaultConfig {
+        minSdkVersion 17
+        targetSdkVersion 17
+        versionCode 1
+        versionName "1.0"
+    }
+}
+
+
