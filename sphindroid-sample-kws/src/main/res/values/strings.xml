@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="app_name">Raktinės frazės demo</string>
-  <string name="start">Pradžia</string>
-  <string name="stop">Pabaiga</string>
 
-  <string name="bank_help_text1">Gramatikos pavizdys. Pradėkite sakydami &lt;Dėmesio Berže&gt;. Tuomet ištarkite:</string>
-  <string name="bank_help_text2">- Suk Kairėn</string>
-  <string name="bank_help_text3">- Varyk Pirmyn</string>
+  <string name="kws_caption">Sakykite &lt;Gerai Berže&gt;.</string>
+
   
 </resources>

@@ -15,12 +15,15 @@ repositories {
 }
 
 dependencies {
+
     compile ('edu.cmu.pocketsphinx.lib:pocketsphinx-android-jni:0.8.4-SNAPSHOT@jar')
     compile ('edu.cmu.pocketsphinx.lib:pocketsphinx-android-lib:0.8.4-SNAPSHOT@aar')
+//    compile project(':pocketsphinx-android-jni')
+//    compile project(':pocketsphinx-android-lib')
     compile ('org.sphindroid.model:sphindroid-am-lt_lt:0.2-SNAPSHOT@aar')
+    compile ('org.sphindroid:sphindroid-api:0.1-SNAPSHOT')
     androidTestCompile 'com.jayway.android.robotium:robotium-solo:4.3.1'
 }
-
 
 android {
     compileSdkVersion 19
@@ -31,5 +34,6 @@ android {
         targetSdkVersion 19
     }
 }
+
 
 

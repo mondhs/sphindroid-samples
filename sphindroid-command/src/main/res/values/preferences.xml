@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="autoVad">Automatinis balso nustatymas</string>
+    <string name="autoVadDescription">Laisvų rankų darbo režimas naudojant raktažodį</string>
+    <string name="recogntionGroup">Atpažintuvas</string>
+</resources>

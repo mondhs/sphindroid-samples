@@ -1,0 +1,15 @@
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        android:title="@string/recogntionGroup">
+
+        <CheckBoxPreference
+            android:key="autoVad"
+            android:title="@string/autoVad"
+            android:summary="@string/autoVadDescription" />
+
+    </PreferenceCategory>
+
+
+</PreferenceScreen>

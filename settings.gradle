@@ -1,4 +1,4 @@
-include ':sphindroid-sample-kws',
-        //':sphindroid-simple'
-        ':sphindroid-demo'
+include ':sphindroid-sample-kws', ':sphindroid-command'
+//':sphindroid-simple'
+        //
 
