@@ -1,8 +1,5 @@
 package org.sphindroid.sample.kws;
 
-//import static android.widget.Toast.makeText;
-//import static edu.cmu.pocketsphinx.Assets.syncAssets;
-//import static edu.cmu.pocketsphinx.SpeechRecognizerSetup.defaultSetup;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,7 +12,12 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
-import edu.cmu.pocketsphinx.*;
+
+import edu.cmu.pocketsphinx.Assets;
+import edu.cmu.pocketsphinx.Hypothesis;
+import edu.cmu.pocketsphinx.RecognitionListener;
+import edu.cmu.pocketsphinx.SpeechRecognizer;
+import edu.cmu.pocketsphinx.SpeechRecognizerSetup;
 
 
 public class KeywordSpottingActivity extends Activity implements
@@ -24,7 +26,7 @@ public class KeywordSpottingActivity extends Activity implements
     private static final String TAG = KeywordSpottingActivity.class.getSimpleName();
 
     private static final String KWS_SEARCH_NAME = "wakeup";
-    private static final String KEYPHRASE = "GERAI BERŽE";
+    private static final String KEYPHRASE = "gerai berže";
 
     private SpeechRecognizer recognizer;
     private final Map<String, Integer> captions = new HashMap<String, Integer>();
@@ -39,21 +41,23 @@ public class KeywordSpottingActivity extends Activity implements
         File appDir;
 
         try {
-            appDir = Assets.syncAssets(getApplicationContext());
+            Assets assets = new Assets(KeywordSpottingActivity.this);
+            appDir = assets.syncAssets();
         } catch (IOException e) {
-            throw new RuntimeException("failed to synchronize assets", e);
+            Log.e(TAG,"syncAssets failed", e);
+                throw new RuntimeException("failed to synchronize assets", e);
         }
 
         recognizer = SpeechRecognizerSetup.defaultSetup()
                 .setAcousticModel(new File(appDir, "acoustic_model/lt_lt/hmm"))
-                .setDictionary(new File(appDir, "acoustic_model/lt_lt/lm/robotas.dict"))
+                .setDictionary(new File(appDir, "acoustic_model/lt_lt/dict/robotas.dict"))
                 .setRawLogDir(appDir)
-                .setKeywordThreshold(Float.MIN_VALUE)
+                .setKeywordThreshold(1e-20f)
                 .getRecognizer();
 
         recognizer.addListener(this);
         // Create keyword-activation search.
-        recognizer.addKeywordSearch(KWS_SEARCH_NAME, KEYPHRASE);
+        recognizer.addKeyphraseSearch(KWS_SEARCH_NAME, KEYPHRASE);
 
         setContentView(R.layout.main);
         switchSearch(KWS_SEARCH_NAME);
@@ -74,6 +78,7 @@ public class KeywordSpottingActivity extends Activity implements
     }
 
     private void switchSearch(String searchName) {
+        Log.d(TAG, "switchSearch" + searchName);
         recognizer.stop();
         recognizer.startListening(searchName);
 
@@ -84,7 +89,10 @@ public class KeywordSpottingActivity extends Activity implements
 
     @Override
     public void onResult(Hypothesis hypothesis) {
-        String text = hypothesis.getHypstr();
+        String text = "Neatpažinta";
+        if (hypothesis != null){
+            text = hypothesis.getHypstr();
+        }
         ((TextView) findViewById(R.id.result_text)).setText(text);
         Log.d(TAG, "on partial: " + text);
         Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
@@ -97,6 +105,7 @@ public class KeywordSpottingActivity extends Activity implements
 
     @Override
     public void onEndOfSpeech() {
+       Log.d(TAG, "onEndOfSpeech");
        switchSearch(KWS_SEARCH_NAME);
     }
 }

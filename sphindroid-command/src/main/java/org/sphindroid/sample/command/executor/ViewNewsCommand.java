@@ -8,18 +8,18 @@ import android.net.Uri;
  * Created by mgreibus on 14.3.23.
  */
 public class ViewNewsCommand implements GeneralCommand {
-    private static final String DELFI = "DELFIO";
-    private static final String LRT = "ELERTĖ";
-    private static final String LRYTAS = "LIETRYČIO";
+    private static final String DELFI = "delfio";
+    private static final String LRT = "elertė";
+    private static final String LRYTAS = "lietryčio";
 
 //    private Context context;
 
-    private static final String VIEW_NEWS = "RODYK NAUJIENAS";
+    private static final String VIEW_NEWS = "rodyk naujienas";
 
 
     @Override
     public String execute(String command, Context context) {
-        String chosenPortal = command.replace("RODYK", "").replace("NAUJIENAS", "").trim();
+        String chosenPortal = command.replace("rodyk", "").replace("naujienas", "").trim();
         String newPortal = "m.delfi.lt";
         String portalName ="delfį";
         if(DELFI.equals(chosenPortal)){
@@ -37,7 +37,7 @@ public class ViewNewsCommand implements GeneralCommand {
 
     @Override
     public boolean isSupport(String command) {
-        return command.startsWith("RODYK") && command.endsWith("NAUJIENAS");
+        return command.startsWith("rodyk") && command.endsWith("naujienas");
     }
 
     @Override

@@ -14,7 +14,7 @@ import java.util.Calendar;
  */
 public class TimeCommand implements GeneralCommand {
 
-    private static final String WHAT_TIME_IS_IT= "KIEK VALANDŲ";
+    private static final String WHAT_TIME_IS_IT= "kiek valandų";
 
 
 

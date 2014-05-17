@@ -15,9 +15,9 @@ repositories {
 }
 
 dependencies {
-    compile ('edu.cmu.pocketsphinx.lib:pocketsphinx-android-jni:0.8.4-SNAPSHOT@jar')
-    compile ('edu.cmu.pocketsphinx.lib:pocketsphinx-android-lib:0.8.4-SNAPSHOT@aar')
-    compile ('org.sphindroid.model:sphindroid-am-lt_lt:0.2-SNAPSHOT@aar')
+    compile ('edu.cmu.pocketsphinx.lib:pocketsphinx-android-jni:0.8.5@jar')
+    compile ('edu.cmu.pocketsphinx.lib:pocketsphinx-android-lib:0.8.5@aar')
+    compile ('org.sphindroid.model:sphindroid-am-lt_lt:0.3-SNAPSHOT@aar')
     androidTestCompile 'com.jayway.android.robotium:robotium-solo:4.3.1'
 }
 

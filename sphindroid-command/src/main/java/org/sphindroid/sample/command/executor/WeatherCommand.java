@@ -30,7 +30,7 @@ public class WeatherCommand implements GeneralCommand {
 
     private static final String TAG = WeatherCommand.class.getSimpleName();
 
-    private static final String WHAT_WEATHER_IS= "KOKS ORAS";
+    private static final String WHAT_WEATHER_IS= "koks oras";
 
     static {
         resolveWeatherMap.put(0, "TORNADAS");// tornado
@@ -134,10 +134,12 @@ public class WeatherCommand implements GeneralCommand {
 
     private String createWeatherForSpeech(WeatherDto weather) {
         LithuanianGrammarHelperImpl grammarHelper = SfdCoreFactory.getInstance().createLithuanianGrammarHelper();
-        String rtn = MessageFormat.format("{0}, {1} {2}", resolveWeatherMap.get(weather.code),
+        String rtn = "Neturiu duomenų";
+        if(weather != null){
+            rtn = MessageFormat.format("{0}, {1} {2}", resolveWeatherMap.get(weather.code),
                 grammarHelper.resolveNumber(weather.temperature, GenusEnum.masculine).toUpperCase(),
-                grammarHelper.matchNounToNumerales(weather.temperature, "laipsnis")
-        );
+                grammarHelper.matchNounToNumerales(weather.temperature, "laipsnis"));
+        }
         return rtn;
     }
 
@@ -172,7 +174,7 @@ public class WeatherCommand implements GeneralCommand {
             URLConnection connection = url.openConnection();
             try {
                 connection.setDoInput(true);
-                connection.setDoOutput(true);
+
                 InputStream stream = connection.getInputStream();
 
                 XmlPullParserFactory factory = XmlPullParserFactory.newInstance();

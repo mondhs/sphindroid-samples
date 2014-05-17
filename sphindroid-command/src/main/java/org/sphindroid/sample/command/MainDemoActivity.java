@@ -26,7 +26,7 @@ import edu.cmu.pocketsphinx.SpeechRecognizerSetup;
 public class MainDemoActivity extends Activity {
 
     protected static String KWS_SEARCH_NAME = "wakeup_search";
-    protected static String KEYPHRASE = "GERAI BERŽE";
+    protected static String KEYPHRASE = "gerai berže";
     private static final String TAG = MainDemoActivity.class.getName();
 
 
@@ -42,21 +42,22 @@ public class MainDemoActivity extends Activity {
 
         File appDir;
         try {
-            appDir = Assets.syncAssets(getApplicationContext());
+            Assets assets = new Assets(MainDemoActivity.this);
+            appDir = assets.syncAssets();
         } catch (IOException e) {
             Log.e(TAG, "IO Exception", e);
             throw new RuntimeException(e);
         }
         recognizer = SpeechRecognizerSetup.defaultSetup()
                 .setAcousticModel(new File(appDir, "acoustic_model/lt_lt/hmm"))
-                .setDictionary(new File(appDir, "acoustic_model/lt_lt/lm/demo.dict"))
+                .setDictionary(new File(appDir, "acoustic_model/lt_lt/dict/demo.dict"))
                 .setRawLogDir(appDir)
-                .setKeywordThreshold(Float.MIN_VALUE)
+                .setKeywordThreshold(1e-20f)
                 .getRecognizer();
 
 //        recognizer.addListener(this);
 
-        recognizer.addKeywordSearch(KWS_SEARCH_NAME, KEYPHRASE);
+        recognizer.addKeyphraseSearch(KWS_SEARCH_NAME, KEYPHRASE);
 
         File demoGrammar = new File(appDir, "acoustic_model/lt_lt/lm/demo.gram");
 

@@ -8,7 +8,7 @@ import java.util.List;
  * Created by mgreibus on 14.3.23.
  */
 public class HelpCommand implements GeneralCommand {
-    private static final String HELP = "KOKIAS ŽINAI KOMANDAS";
+    private static final String HELP = "kokias žinai komandas";
     private final List<GeneralCommand> commandList;
 
     public HelpCommand(List<GeneralCommand> commandList) {

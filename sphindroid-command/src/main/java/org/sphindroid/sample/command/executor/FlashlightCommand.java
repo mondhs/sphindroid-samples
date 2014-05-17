@@ -11,8 +11,8 @@ import android.util.Log;
 public class FlashlightCommand implements GeneralCommand{
 
     private static final String TAG = FlashlightCommand.class.getSimpleName();
-    private static final String TURN_LIGHT_ON= "ĮJUNK ŠVIESĄ";
-    private static final String TURN_LIGHT_OFF= "IŠJUNK ŠVIESĄ";
+    private static final String TURN_LIGHT_ON= "įjunk šviesą";
+    private static final String TURN_LIGHT_OFF= "išjunk šviesą";
 //    private final Context context;
 //    private Camera camera = null;
     private boolean isFlashOn =false;
@@ -37,9 +37,11 @@ public class FlashlightCommand implements GeneralCommand{
     public String execute(String command, Context context) {
         Camera camera = createCamera(context);
         if(camera == null){
-            return null;
+            return "Negaliu perjungti šviesą";
         }
-        return changeFlashState(camera);
+        String rtn = changeFlashState(camera);
+        camera.release();
+        return rtn;
     }
 
     @Override
@@ -80,7 +82,6 @@ public class FlashlightCommand implements GeneralCommand{
             isFlashOn = false;
             return "šviesa išjungta";
         }
-
     }
 
 }

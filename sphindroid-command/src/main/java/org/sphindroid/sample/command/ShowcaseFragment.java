@@ -33,7 +33,7 @@ public abstract class ShowcaseFragment extends Fragment implements
         setRetainInstance(true);
         context = getActivity();
         vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-        recognizer = ((MainDemoActivity) context).getRecognizer();
+
         this.commandAppContext = ((MainDemoActivity) context).getCommandAppContext();
         setRetainInstance(true);
     }
@@ -42,6 +42,7 @@ public abstract class ShowcaseFragment extends Fragment implements
     public void onStart() {
         super.onStart();
         Log.w(TAG, "[onStart] ");
+        recognizer = ((MainDemoActivity) context).getRecognizer();
         recognizer.addListener(this);
         if(this.commandAppContext.getAutoVad()) {
             recognizer.startListening(MainDemoActivity.KWS_SEARCH_NAME);
@@ -96,12 +97,16 @@ public abstract class ShowcaseFragment extends Fragment implements
             }
         }else{
             //grammar recognition
-            processPartialGrammarResult(hypothesis);
+            //processPartialGrammarResult(hypothesis);
         }
     }
 
     public void onResult(Hypothesis hypothesis) {
         Log.w(TAG, "[onResult]: " + recognizer.getSearchName());
+        if(hypothesis == null){
+            Log.w(TAG, "[onResult]: Hypothesis is null. will not process");
+            return;
+        }
         if (MainDemoActivity.KWS_SEARCH_NAME.equals(recognizer.getSearchName()) ){
             String text = hypothesis.getHypstr();
             if(MainDemoActivity.KEYPHRASE.equals(text)){

@@ -6,7 +6,7 @@ import android.content.Context;
  * Created by mgreibus on 14.3.23.
  */
 public class HiCommand implements GeneralCommand {
-    private static final String HI= "LABAS";
+    private static final String HI= "labas";
     @Override
     public String execute(String command, Context context) {
         return "Laba Diena";
