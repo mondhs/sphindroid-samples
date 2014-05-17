@@ -21,7 +21,9 @@ public class HelpCommand implements GeneralCommand {
         sb.append("Aš moku vykdyti šias komandas. ");
         String separator = ". ";
         for (GeneralCommand executor: getCommandList()){
-            sb.append(executor.retrieveCommandSample()).append(separator);
+            if(!HELP.equals(executor.retrieveCommandSample())) {
+                sb.append(executor.retrieveCommandSample()).append(separator);
+            }
         }
         return sb.toString();
     }

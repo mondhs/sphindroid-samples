@@ -97,7 +97,7 @@ public abstract class ShowcaseFragment extends Fragment implements
             }
         }else{
             //grammar recognition
-            //processPartialGrammarResult(hypothesis);
+            processPartialGrammarResult(hypothesis);
         }
     }
 

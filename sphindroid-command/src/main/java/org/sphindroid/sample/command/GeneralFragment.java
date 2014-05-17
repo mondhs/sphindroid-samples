@@ -3,7 +3,6 @@ package org.sphindroid.sample.command;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
@@ -13,6 +12,9 @@ import android.widget.ToggleButton;
 
 import org.sphindroid.sample.command.executor.CommandExecutor;
 import org.sphindroid.sample.command.executor.GeneralCommand;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import edu.cmu.pocketsphinx.Hypothesis;
 
@@ -24,6 +26,7 @@ public class GeneralFragment extends ShowcaseFragment {
     private ToggleButton toggleButton;
     private CommandExecutor commandExecutor;
     private ProgressBar progressBar;
+    private Set<String> executedCommandUttId = new HashSet<String>();
 
 
     public GeneralFragment(){
@@ -69,8 +72,9 @@ public class GeneralFragment extends ShowcaseFragment {
     @Override
     public void processPartialGrammarResult(Hypothesis hypothesis) {
         String command = hypothesis.getHypstr();
-        Log.w(TAG, "[processPartialGrammarResult]>>> part result: " + command);
-        executeIfCan(command);
+        String uttid = hypothesis.getUttid();
+        Log.w(TAG, "[processPartialGrammarResult]>>> part result: [" + uttid + "]: "+ command);
+        executeIfCan(uttid, command);
         resultText.setText(hypothesis.getHypstr());
     }
 
@@ -80,19 +84,22 @@ public class GeneralFragment extends ShowcaseFragment {
      */
     public void processGrammarResult(Hypothesis hypothesis) {
         String command = hypothesis.getHypstr();
-        Log.w(TAG, "[processGrammarResult] final result: " + command);
-        executeIfCan(command);
+        String uttid = hypothesis.getUttid();
+        Log.w(TAG, "[processGrammarResult] final result: [" + uttid + "]: " + command);
+        executeIfCan(uttid, command);
         resultText.setText(command);
     }
 
     /**
      *
+     * @param uttid
      * @param command
      */
-    public void executeIfCan(String command){
-        Log.w(TAG, "[executeIfCan]: command " + command);
+    public void executeIfCan(String uttid, String command){
+        Log.w(TAG, "[executeIfCan]: command [" + uttid + "]: "  + command);
         GeneralCommand generalCommand = commandExecutor.findCommand(command);
-        if(generalCommand != null){
+        if(generalCommand != null && !executedCommandUttId.contains(uttid)){
+            executedCommandUttId.add(uttid);
             switchToPause();
             commandExecutor.execute(generalCommand, command, getActivity().getApplicationContext());
             switchToSpotting();

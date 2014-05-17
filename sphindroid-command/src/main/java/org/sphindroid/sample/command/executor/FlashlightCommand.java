@@ -14,21 +14,25 @@ public class FlashlightCommand implements GeneralCommand{
     private static final String TURN_LIGHT_ON= "įjunk šviesą";
     private static final String TURN_LIGHT_OFF= "išjunk šviesą";
 //    private final Context context;
-//    private Camera camera = null;
+    private Camera camera = null;
     private boolean isFlashOn =false;
 
     public Camera createCamera(Context context){
+        Camera theCamera = camera;
+        if(camera != null){
+            return camera;
+        }
         boolean hasFlash = context.getPackageManager()
                 .hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH);
-        Camera camera = null;
         if (hasFlash) {
             try {
-                camera = Camera.open();
+                theCamera = Camera.open();
             } catch (RuntimeException e) {
                 Log.e(TAG, "Camera Error. Failed to Open. Error: ", e);
             }
         }
-        return camera;
+        camera = theCamera;
+        return theCamera;
     }
 
 
@@ -40,7 +44,6 @@ public class FlashlightCommand implements GeneralCommand{
             return "Negaliu perjungti šviesą";
         }
         String rtn = changeFlashState(camera);
-        camera.release();
         return rtn;
     }
 
@@ -79,6 +82,8 @@ public class FlashlightCommand implements GeneralCommand{
             params.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
             aCamera.setParameters(params);
             aCamera.stopPreview();
+            aCamera.release();
+            camera = null;
             isFlashOn = false;
             return "šviesa išjungta";
         }
