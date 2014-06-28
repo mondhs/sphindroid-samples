@@ -1,116 +1,81 @@
 package org.sphindroid.sample;
 
+import java.io.File;
+import java.io.IOException;
 import java.text.MessageFormat;
-
-import org.sphindroid.core.dto.AsrStatistics;
-import org.sphindroid.core.dto.RecognitionContext;
-import org.sphindroid.core.service.AsrMessagePublisher;
-import org.sphindroid.core.service.AsrRecognitionListener;
-import org.sphindroid.core.service.SphindroidResourceHelper;
-import org.sphindroid.lib.async.AsrRecordAudioTaskImpl;
-import org.sphindroid.lib.async.AsrWavAudioTaskImpl;
-import org.sphindroid.lib.async.SphindroidRecognizer;
-import org.sphindroid.lib.service.SphindroidFactory;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
-public class SimpleActivity extends Activity {
+import edu.cmu.pocketsphinx.Assets;
+import edu.cmu.pocketsphinx.Hypothesis;
+import edu.cmu.pocketsphinx.RecognitionListener;
+import edu.cmu.pocketsphinx.SpeechRecognizer;
+import edu.cmu.pocketsphinx.SpeechRecognizerSetup;
 
-	static {
-		System.loadLibrary("pocketsphinx_jni");
-	}
+public class SimpleActivity extends Activity implements
+        RecognitionListener,CompoundButton.OnCheckedChangeListener {
+    private static final String TAG = SimpleActivity.class.getSimpleName();
 
-	private SphindroidResourceHelper sphindroidResourceHelper;
-	private SphindroidRecognizer sphindroidRecognizer;
-	private SimpleAsrMessagePublisher messagePublisher; 
+    private SpeechRecognizer recognizer;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		messagePublisher = new SimpleAsrMessagePublisher();
-		SphindroidFactory factory = SphindroidFactory.getInstance();
-		sphindroidResourceHelper = factory
-				.createSphindroidResrouceHelper(this);
-		SphindroidFactory.getInstance().changeAsrMessagePublisher(messagePublisher);
-		//add action handlers for button
-		initUI();
-		//Start Sphindrod thread.
-		initSphinxdroid();
+        File appDir;
+        try {
+            Assets assets = new Assets(SimpleActivity.this);
+            appDir = assets.syncAssets();
+        } catch (IOException e) {
+            Log.e(TAG, "syncAssets failed", e);
+            throw new RuntimeException("failed to synchronize assets", e);
+        }
 
-	}
+        recognizer = SpeechRecognizerSetup.defaultSetup()
+                .setAcousticModel(new File(appDir, "acoustic_model/lt_lt/hmm"))
+                .setDictionary(new File(appDir, "acoustic_model/lt_lt/dict/numeriai.dict"))
+                .setRawLogDir(appDir)
+                .setKeywordThreshold(1e-20f)
+                .getRecognizer();
 
-	@Override
-	protected void onDestroy() {
-		sphindroidResourceHelper.cleanUp(sphindroidRecognizer.getCtx());
-		super.onDestroy();
+        recognizer.addListener(this);
 
-	}
+        File demoGrammar = new File(appDir, "acoustic_model/lt_lt/lm/numeriai.gram");
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case R.id.menu_self_test:
-			selfTest();
-			break;
-		case R.id.menu_reinit:
-			sphindroidRecognizer.reinit();
-			break;
-		default:
-			return super.onOptionsItemSelected(item);
-		}
-		return true;
-	}
+        recognizer.addGrammarSearch("demoGrammar", demoGrammar);
 
-	private void selfTest() {
-		SphindroidFactory.getInstance().changeAsrAudioRunnable(
-				new AsrWavAudioTaskImpl(getCtx().getSelfTestDir()));
-		sphindroidRecognizer.start();
-		sphindroidRecognizer.stop();
+        ToggleButton toggleButton = (ToggleButton) findViewById(R.id.start_button);
+        toggleButton.setChecked(false);
+        toggleButton.setOnCheckedChangeListener(this);
 
-	}
 
-	private void initUI() {
-		final Button listenButton = (Button) findViewById(R.id.btnListen);
-		listenButton.setEnabled(false);
-		listenButton.setOnTouchListener(new OnTouchListener() {
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				switch (event.getAction()) {
-				case MotionEvent.ACTION_DOWN:
-					SphindroidFactory.getInstance().changeAsrAudioRunnable(
-							new AsrRecordAudioTaskImpl());
-					sphindroidRecognizer.start();
-					break;
-				case MotionEvent.ACTION_UP:
-					sphindroidRecognizer.stop();
-					break;
-				default:
-					;
-				}
-				return false;
-			}
-		});
+    }
 
-	}
 
-	/**
-	 *
-	 */
-	private void initSphinxdroid() {
-		SphindroidFactory factory = SphindroidFactory.getInstance();
-		this.sphindroidRecognizer = factory.createDefaultSphindroidRecognizer(
-				this, new MainActivityRecognitionListener());
-		sphindroidRecognizer.execute();
-	}
+
+
+    @Override
+    public void onCheckedChanged(CompoundButton button, boolean checked) {
+        Log.w(TAG, "[onCheckedChanged]: checked " + checked);
+        recognizer.startListening("demoGrammar");
+    }
+
+    @Override
+    protected void onDestroy() {
+        recognizer.stop();
+        super.onDestroy();
+    }
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -118,71 +83,28 @@ public class SimpleActivity extends Activity {
 		return true;
 	}
 
+    @Override
+    public void onBeginningOfSpeech() {
 
+    }
 
+    @Override
+    public void onEndOfSpeech() {
+        ((ToggleButton) findViewById(R.id.start_button)).setChecked(false);
+        recognizer.stop();
+    }
 
+    @Override
+    public void onPartialResult(Hypothesis hypothesis) {
+    }
 
-	public class MainActivityRecognitionListener implements
-			AsrRecognitionListener {
-
-
-		@Override
-		public void onPartialResults(AsrStatistics stats) {
-			//Do nothing
-		}
-
-		@Override
-		public void onResults(AsrStatistics stats) {
-			messagePublisher.publishMessage(MessageFormat.format(
-					"Result {0}[{1}]", stats.getHypothesis(),
-					stats.getBestScore()));
-		}
-
-		@Override
-		public void onError(int err) {
-			messagePublisher.publishMessage("" + err);
-		}
-
-		@Override
-		public void onEndOfSpeech() {
-			//Do nothing
-		}
-
-		@Override
-		public void ready() {
-
-			messagePublisher.publishMessage("Ready: ");
-			StringBuilder content = sphindroidResourceHelper.readFromFile(sphindroidRecognizer.getCtx()
-					.getFileJsgf());
-			messagePublisher.publishMessage(content.toString());
-
-			runOnUiThread(new Runnable() {
-				public void run() {
-					findViewById(R.id.btnListen).setEnabled(true);
-				}
-			});
-
-		}
-
-	}
-	
-	class SimpleAsrMessagePublisher implements AsrMessagePublisher{
-
-		@Override
-		public void publishMessage(final String format, Object... args) {
-			final String message = MessageFormat.format(format, args);
-			runOnUiThread(new Runnable() {
-				public void run() {
-					TextView out = ((TextView) findViewById(R.id.outputText));
-					out.append(message + "\n");
-				}
-			});
-		}
-		
-	}
-
-	public RecognitionContext getCtx() {
-		return sphindroidRecognizer.getCtx();
-	}
+    @Override
+    public void onResult(Hypothesis hypothesis) {
+        String message = hypothesis.getHypstr();
+        String uttid = hypothesis.getUttid();
+        Log.d(TAG, "[onResult]>>>  result: [" + uttid + "]: "+ message);
+		TextView out = ((TextView) findViewById(R.id.outputText));
+		out.append(message + "\n");
+    }
 
 }

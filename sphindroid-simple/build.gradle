@@ -1,8 +1,8 @@
 apply plugin: 'android'
 
 repositories {
-    mavenCentral()
     mavenLocal()
+    mavenCentral()
     maven {
         url "http://repo2.maven.org/maven2"
     }
@@ -15,26 +15,21 @@ repositories {
 }
 
 dependencies {
-    compile 'org.sphindroid:sphindroid-api:0.1-SNAPSHOT'
-    compile 'org.sphindroid:sphindroid-lib:0.1-SNAPSHOT@aar'
-    compile 'org.sphindroid.model:sphindroid-am-lt_lt:0.1-SNAPSHOT'
+    compile ('edu.cmu.pocketsphinx.lib:pocketsphinx-android-jni:0.8.5@jar')
+    compile ('edu.cmu.pocketsphinx.lib:pocketsphinx-android-lib:0.8.5@aar')
+    compile ('org.sphindroid.model:sphindroid-am-lt_lt:0.3-SNAPSHOT@aar')
+    androidTestCompile 'com.jayway.android.robotium:robotium-solo:4.3.1'
 }
-
 
 
 android {
     compileSdkVersion 19
-    buildToolsVersion "19.0.1"
+    buildToolsVersion "19.1.0"
 
     defaultConfig {
         minSdkVersion 17
-        targetSdkVersion 17
-        versionCode 1
-        versionName "1.0"
-    }
-    android {
-        packagingOptions {
-            exclude 'AndroidManifest.xml'
-        }
+        targetSdkVersion 19
     }
 }
+
+

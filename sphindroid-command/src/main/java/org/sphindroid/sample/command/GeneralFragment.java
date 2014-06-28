@@ -90,6 +90,11 @@ public class GeneralFragment extends ShowcaseFragment {
         resultText.setText(command);
     }
 
+    @Override
+    public void onPartialResult(Hypothesis hypothesis) {
+        super.onPartialResult(hypothesis);
+    }
+
     /**
      *
      * @param uttid

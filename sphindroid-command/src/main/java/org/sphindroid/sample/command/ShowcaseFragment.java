@@ -2,6 +2,7 @@ package org.sphindroid.sample.command;
 
 import android.app.Fragment;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.util.Log;
@@ -133,6 +134,11 @@ public abstract class ShowcaseFragment extends Fragment implements
     public abstract void processGrammarResult(Hypothesis hypothesis);
     protected abstract void prepareForRecognition();
     protected abstract void finalizeRecognition();
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+    }
 
     @Override
     public void onBeginningOfSpeech() {
