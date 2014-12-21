@@ -51,8 +51,8 @@ public class KeywordSpottingActivity extends Activity implements
         recognizer = SpeechRecognizerSetup.defaultSetup()
                 .setAcousticModel(new File(appDir, "acoustic_model/lt_lt/hmm"))
                 .setDictionary(new File(appDir, "acoustic_model/lt_lt/dict/robotas.dict"))
-                .setRawLogDir(appDir)
-                .setKeywordThreshold(1e-20f)
+                //.setRawLogDir(appDir)
+                .setKeywordThreshold(1e-40f)
                 .getRecognizer();
 
         recognizer.addListener(this);
@@ -65,6 +65,9 @@ public class KeywordSpottingActivity extends Activity implements
 
     @Override
     public void onPartialResult(Hypothesis hypothesis) {
+        if(hypothesis == null){
+            return;
+        }
         String text = hypothesis.getHypstr();
         Log.d(TAG, "on partial: " + text);
         ((TextView) findViewById(R.id.result_text)).setText(text);
@@ -107,5 +110,14 @@ public class KeywordSpottingActivity extends Activity implements
     public void onEndOfSpeech() {
        Log.d(TAG, "onEndOfSpeech");
        switchSearch(KWS_SEARCH_NAME);
+    }
+    @Override
+    public void onError(Exception e) {
+        Log.e(TAG, "[onError]>>> ", e);
+    }
+
+    @Override
+    public void onTimeout() {
+        Log.e(TAG, "[onTimeout]>>> ");
     }
 }

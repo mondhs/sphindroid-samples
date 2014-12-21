@@ -23,8 +23,9 @@ import edu.cmu.pocketsphinx.RecognitionListener;
 import edu.cmu.pocketsphinx.SpeechRecognizer;
 import edu.cmu.pocketsphinx.SpeechRecognizerSetup;
 
-public class SimpleActivity extends Activity implements
-        RecognitionListener,CompoundButton.OnCheckedChangeListener {
+public class SimpleActivity extends Activity
+        implements RecognitionListener,CompoundButton.OnCheckedChangeListener
+{
     private static final String TAG = SimpleActivity.class.getSimpleName();
 
     private SpeechRecognizer recognizer;
@@ -105,6 +106,16 @@ public class SimpleActivity extends Activity implements
         Log.d(TAG, "[onResult]>>>  result: [" + uttid + "]: "+ message);
 		TextView out = ((TextView) findViewById(R.id.outputText));
 		out.append(message + "\n");
+    }
+
+    @Override
+    public void onError(Exception e) {
+        Log.e(TAG, "[onError]>>> ", e);
+    }
+
+    @Override
+    public void onTimeout() {
+        Log.e(TAG, "[onTimeout]>>> ");
     }
 
 }

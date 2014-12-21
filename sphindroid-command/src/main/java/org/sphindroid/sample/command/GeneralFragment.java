@@ -100,7 +100,7 @@ public class GeneralFragment extends ShowcaseFragment {
      * @param uttid
      * @param command
      */
-    public void executeIfCan(String uttid, String command){
+    public void executeIfCan(   String uttid, String command){
         Log.w(TAG, "[executeIfCan]: command [" + uttid + "]: "  + command);
         GeneralCommand generalCommand = commandExecutor.findCommand(command);
         if(generalCommand != null && !executedCommandUttId.contains(uttid)){

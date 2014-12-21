@@ -1,35 +1,21 @@
 apply plugin: 'android'
 
-repositories {
-    mavenLocal()
-    mavenCentral()
-    maven {
-        url "http://repo2.maven.org/maven2"
-    }
-    maven {
-        url "http://repository-spantus.forge.cloudbees.com/release/"
-    }
-    maven {
-        url "http://repository-spantus.forge.cloudbees.com/snapshot/"
-    }
-}
-
 dependencies {
-    compile ('edu.cmu.pocketsphinx.lib:pocketsphinx-android-jni:0.8.5@jar')
-    compile ('edu.cmu.pocketsphinx.lib:pocketsphinx-android-lib:0.8.5@aar')
-    compile ('org.sphindroid.model:sphindroid-am-lt_lt:0.3-SNAPSHOT@aar')
-    compile ('org.sphindroid:sphindroid-api:0.3-SNAPSHOT')
+    compile ('edu.cmu.pocketsphinx.lib:pocketsphinx-android-jni:0.8.6@jar')
+    compile ('edu.cmu.pocketsphinx.lib:pocketsphinx-android-lib:0.8.6@aar')
+    compile ('org.sphindroid.model:sphindroid-am-lt_lt:0.4.1@aar')
 }
 
 
 android {
-    compileSdkVersion 19
-    buildToolsVersion "19.1.0"
+    compileSdkVersion 21
+    buildToolsVersion "21.1.2"
 
     defaultConfig {
-        minSdkVersion 17
-        targetSdkVersion 19
+        minSdkVersion 19
+        targetSdkVersion 21
+        versionCode 1
+        versionName "1.0"
     }
 }
-
 

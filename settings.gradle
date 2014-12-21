@@ -1,2 +1,2 @@
-include ':sphindroid-sample-kws', ':sphindroid-command', ':sphindroid-simple'
+include ':sphindroid-simple', ':sphindroid-sample-kws', ':sphindroid-command'
 

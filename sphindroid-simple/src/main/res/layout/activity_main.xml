@@ -13,7 +13,8 @@
         android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:textOff="@string/start"
-        android:textOn="@string/stop" />
+        android:textOn="@string/stop"
+        android:layout_gravity="center_horizontal" />
 
     <TextView
         android:id="@+id/outputText"

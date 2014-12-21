@@ -28,8 +28,9 @@ public class CommandExecutor implements TextToSpeech.OnInitListener {
             commandList.add(new ViewNewsCommand());
             commandList.add(new TimeCommand());
             commandList.add(new WeatherCommand());
-            commandList.add(new FlashlightCommand());
+//            commandList.add(new FlashlightCommand());
             commandList.add(new CalculatorCommand());
+            commandList.add(new CurrencyConverterCommand());
             commandList.add(new HelpCommand(commandList));
         }
 

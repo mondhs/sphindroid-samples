@@ -51,8 +51,8 @@ public class MainDemoActivity extends Activity {
         recognizer = SpeechRecognizerSetup.defaultSetup()
                 .setAcousticModel(new File(appDir, "acoustic_model/lt_lt/hmm"))
                 .setDictionary(new File(appDir, "acoustic_model/lt_lt/dict/demo.dict"))
-                .setRawLogDir(appDir)
-                .setKeywordThreshold(1e-20f)
+                //.setRawLogDir(appDir)
+                .setKeywordThreshold(1e-40f)
                 .getRecognizer();
 
 //        recognizer.addListener(this);

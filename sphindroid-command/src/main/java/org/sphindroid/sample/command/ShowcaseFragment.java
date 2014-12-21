@@ -90,6 +90,9 @@ public abstract class ShowcaseFragment extends Fragment implements
 //            //keyphrase detected. equivalent to toggle button pressed
 //            setButtonPressed();
 //        Log.w(TAG, "[onPartialResult]: " + recognizer.getSearchName());
+        if(hypothesis == null){
+            return;
+        }
         Log.w(TAG, "[onPartialResult]: getHypstr " + hypothesis.getHypstr());
         if (MainDemoActivity.KWS_SEARCH_NAME.equals(recognizer.getSearchName()) ){
             String text = hypothesis.getHypstr();
@@ -154,5 +157,16 @@ public abstract class ShowcaseFragment extends Fragment implements
         switchToSpotting();
     }
 
-//    protected abstract void setButtonPressed();
+    @Override
+    public void onError(Exception e) {
+        Log.e(TAG, "[onError]", e);
+    }
+
+    @Override
+    public void onTimeout() {
+        Log.e(TAG, "[onTimeout]");
+        switchToSpotting();
+    }
+
+    //    protected abstract void setButtonPressed();
 }
