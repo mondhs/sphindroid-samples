@@ -1,0 +1,21 @@
+#JSGF V1.0;
+
+grammar demo;
+
+
+public <COMMAND> = <HI> | <HOW_ARE_YOU> | <VIEW_NEWS> | <READ_NEWS> | <WHAT_TIME_IS_IT> | <WHAT_WEATHER_IS> | <TURN_LIGHT_ON> | <TURN_LIGHT_OFF> | <HELP> | <CALCULATOR> | <CURRENCY_CONVERTER>;
+<HI> = labas|laba diena;
+<HOW_ARE_YOU> = kaip sekasi;
+<VIEW_NEWS>= rodyk [(delfio|elertė|lietryčio)] naujienas;
+<READ_NEWS>= skaityk naujienas;
+<WHAT_TIME_IS_IT> = kiek valandų;
+<WHAT_WEATHER_IS> = koks oras;
+<TURN_LIGHT_ON> = įjunk šviesą;
+<TURN_LIGHT_OFF> = išjunk šviesą;
+<HELP> = kokias žinai komandas;
+<CALCULATOR> = suskaičiuok <DIGIT>  <OPERATOR>  <DIGIT>;
+<CURRENCY_CONVERTER> = paversk <DIGIT> (eurų|euras|litas|litų) (litais|eurais);
+
+
+<DIGIT>= nulis | vienas | du | trys |keturi |penki  |šeši  | septyni  |aštuoni  | devyni ;
+<OPERATOR> = (plius   | minus   | kart  | (dalinti [iš]));

@@ -20,6 +20,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.MessageFormat;
+import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -135,10 +136,15 @@ public class WeatherCommand implements GeneralCommand {
     private String createWeatherForSpeech(WeatherDto weather) {
         LithuanianGrammarHelperImpl grammarHelper = SfdCoreFactory.getInstance().createLithuanianGrammarHelper();
         String rtn = "Neturiu duomenų";
+        String positive="";
         if(weather != null){
-            rtn = MessageFormat.format("{0}, {1} {2}", resolveWeatherMap.get(weather.code),
-                grammarHelper.resolveNumber(weather.temperature, GenusEnum.masculine).toUpperCase(),
-                grammarHelper.matchNounToNumerales(weather.temperature, "laipsnis"));
+            if(weather.temperature<0){
+                positive = "MINUS";
+                weather.temperature *= -1;
+            }
+            rtn = MessageFormat.format("Anot jahū. {0}, {3} {1} {2}.", resolveWeatherMap.get(weather.code),
+                grammarHelper.resolveNumber(weather.temperature, GenusEnum.masculine).toUpperCase(Locale.getDefault()),
+                grammarHelper.matchNounToNumerales(weather.temperature, "laipsnis"), positive);
         }
         return rtn;
     }

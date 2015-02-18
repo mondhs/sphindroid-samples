@@ -1,9 +1,9 @@
-apply plugin: 'android'
+apply plugin: 'com.android.application'
 
 dependencies {
-    compile ('edu.cmu.pocketsphinx.lib:pocketsphinx-android-jni:0.8.6@jar')
-    compile ('edu.cmu.pocketsphinx.lib:pocketsphinx-android-lib:0.8.6@aar')
-    compile ('org.sphindroid.model:sphindroid-am-lt_lt:0.4.1@aar')
+    compile ('edu.cmu.pocketsphinx.lib:pocketsphinx-android-jni:0.8.7@jar')
+    compile ('edu.cmu.pocketsphinx.lib:pocketsphinx-android-lib:0.8.7@aar')
+    compile ('org.sphindroid.model:sphindroid-am-lt_lt:0.4.3@aar')
 }
 
 

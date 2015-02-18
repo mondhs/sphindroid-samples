@@ -6,7 +6,7 @@
     <string name="stop">Pabaiga</string>
     <string name="bank_help_text1">Gramatikos pavizdys. Pradėkite sakydami &lt;Gerai Berže>. Tuomet ištarkite:</string>
     <string name="bank_help_text2">- Labas</string>
-    <string name="bank_help_text3">- Kokas žinai komandas?</string>
+    <string name="bank_help_text3">- Kokias žinai komandas?</string>
     <string name="menu_settings">Nuostatos</string>
 
     <string name="title_activity_set_preference">Nuostatos</string>

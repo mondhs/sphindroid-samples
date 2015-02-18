@@ -18,8 +18,8 @@ public class HelpCommand implements GeneralCommand {
     @Override
     public String execute(String command, Context context) {
         StringBuilder sb = new StringBuilder();
-        sb.append("Aš moku vykdyti šias komandas. ");
-        String separator = ". ";
+        sb.append("Aš moku vykdyti šias komandas: ");
+        String separator = ", ";
         for (GeneralCommand executor: getCommandList()){
             if(!HELP.equals(executor.retrieveCommandSample())) {
                 sb.append(executor.retrieveCommandSample()).append(separator);

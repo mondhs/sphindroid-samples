@@ -13,9 +13,9 @@ import java.util.regex.Pattern;
  */
 public class CurrencyConverterCommand implements GeneralCommand {
 
-    static final String EURO_CONVERTER = "Kiek pinigų";
+    static final String EURO_CONVERTER = "Paversk litą eurais";
 
-    static final Pattern EURO_CONVERTER_PATTERN = Pattern.compile("kiek pinigų (\\w+) (\\w+) (\\w+)");
+    static final Pattern EURO_CONVERTER_PATTERN = Pattern.compile("paversk (\\w+) (\\w+) (\\w+)");
 
 
 
@@ -49,8 +49,15 @@ public class CurrencyConverterCommand implements GeneralCommand {
             return "Nesuprantau: " + command;
         }
         Integer currencyAmount = DIGITS.get(currencyAmountStr);
+        Float resultEuroFloat = 0F;
+        if(currencyTo.startsWith("eur")){
+            resultEuroFloat = currencyAmount.floatValue() / 3.4528f;
+            currencyTo = "eurų";
+        }else{
+            resultEuroFloat = currencyAmount.floatValue() * 3.4528f;
+            currencyTo = "litų";
+        }
 
-        Float resultEuroFloat = currencyAmount.floatValue() * 3.4528f;
 
         Double newEuroRound = Math.round(resultEuroFloat * 100.0) / 100.0;
         DecimalFormat df = new DecimalFormat("###.##");
@@ -59,7 +66,7 @@ public class CurrencyConverterCommand implements GeneralCommand {
         if (newEuroStr == null) {
             return "Nesuskaičiuoju: " + command;
         }
-        return "Tai bus " + newEuroStr + " Eurų";
+        return "Tai bus " + newEuroStr + " " + currencyTo;
     }
 
     @Override

@@ -11,9 +11,10 @@ import java.util.Locale;
 /**
  * Created by mgreibus on 14.3.23.
  */
-public class CommandExecutor implements TextToSpeech.OnInitListener {
+public class CommandExecutor implements TextToSpeech.OnInitListener, TextToSpeech.OnUtteranceCompletedListener {
     private TextToSpeech tts;
 
+    private int uttid = 0;
 
     public final List<GeneralCommand> commandList = new ArrayList<GeneralCommand>();
     private static final String TAG = CommandExecutor.class.getSimpleName();
@@ -32,6 +33,7 @@ public class CommandExecutor implements TextToSpeech.OnInitListener {
             commandList.add(new CalculatorCommand());
             commandList.add(new CurrencyConverterCommand());
             commandList.add(new HelpCommand(commandList));
+            commandList.add(new ReadNewsCommand());
         }
 
 
@@ -76,10 +78,26 @@ public class CommandExecutor implements TextToSpeech.OnInitListener {
     public boolean speak(String message) {
         if(message != null) {
             Log.w(TAG, "[speak]" + message);
+            tts.isSpeaking();
+            String uid = "" + (uttid++);
             tts.speak(message, TextToSpeech.QUEUE_FLUSH, null);
+        }
+        while(tts.isSpeaking()) {
+            try {
+                Thread.sleep(150);
+            } catch (InterruptedException e) {
+            }
         }
         return true;
     }
+
+
+
+    @Override
+    public void onUtteranceCompleted(String utteranceId) {
+
+    }
+
     ////////////////////// TTS /////////////////////////////////////
 
 

@@ -1,21 +1,16 @@
 package org.sphindroid.sample;
 
-import java.io.File;
-import java.io.IOException;
-import java.text.MessageFormat;
-
 import android.app.Activity;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuItem;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.View.OnTouchListener;
-import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.ToggleButton;
+
+import java.io.File;
+import java.io.IOException;
 
 import edu.cmu.pocketsphinx.Assets;
 import edu.cmu.pocketsphinx.Hypothesis;
@@ -26,7 +21,7 @@ import edu.cmu.pocketsphinx.SpeechRecognizerSetup;
 public class SimpleActivity extends Activity
         implements RecognitionListener,CompoundButton.OnCheckedChangeListener
 {
-    private static final String TAG = SimpleActivity.class.getSimpleName();
+    private static final String TAG = SimpleActivity.class.getCanonicalName();
 
     private SpeechRecognizer recognizer;
 
@@ -34,42 +29,58 @@ public class SimpleActivity extends Activity
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-        File appDir;
-        try {
-            Assets assets = new Assets(SimpleActivity.this);
-            appDir = assets.syncAssets();
-        } catch (IOException e) {
-            Log.e(TAG, "syncAssets failed", e);
-            throw new RuntimeException("failed to synchronize assets", e);
-        }
+
+
+        // Recognizer initialization is a time-consuming and it involves IO,
+        // so we execute it in async task
+
+        new AsyncTask<Void, Void, Exception>() {
+            @Override
+            protected Exception doInBackground(Void... params) {
+                try {
+                    Assets assets = new Assets(SimpleActivity.this);
+                    File assetDir = assets.syncAssets();
+                    setupRecognizer(assetDir);
+                } catch (IOException e) {
+                    return e;
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Exception result) {
+                if (result != null) {
+                    throw new IllegalArgumentException("Something bad happen");
+                } else {
+                    ToggleButton toggleButton = (ToggleButton) findViewById(R.id.start_button);
+                    toggleButton.setChecked(false);
+                    toggleButton.setOnCheckedChangeListener(SimpleActivity.this);
+                }
+            }
+        }.execute();
+    }
+
+    private void setupRecognizer(File assetDir) throws IOException {
 
         recognizer = SpeechRecognizerSetup.defaultSetup()
-                .setAcousticModel(new File(appDir, "acoustic_model/lt_lt/hmm"))
-                .setDictionary(new File(appDir, "acoustic_model/lt_lt/dict/numeriai.dict"))
-                .setRawLogDir(appDir)
-                .setKeywordThreshold(1e-20f)
+                .setAcousticModel(new File(assetDir, "acoustic_model/lt_lt/hmm"))
+                .setDictionary(new File(assetDir, "acoustic_model/lt_lt/dict/numeriai.dict"))
                 .getRecognizer();
 
         recognizer.addListener(this);
 
-        File demoGrammar = new File(appDir, "acoustic_model/lt_lt/lm/numeriai.gram");
+        File grammar = new File(assetDir, "acoustic_model/lt_lt/lm/numeriai.gram");
 
-        recognizer.addGrammarSearch("demoGrammar", demoGrammar);
-
-        ToggleButton toggleButton = (ToggleButton) findViewById(R.id.start_button);
-        toggleButton.setChecked(false);
-        toggleButton.setOnCheckedChangeListener(this);
-
+        recognizer.addGrammarSearch("grammar", grammar);
 
     }
-
 
 
 
     @Override
     public void onCheckedChanged(CompoundButton button, boolean checked) {
         Log.w(TAG, "[onCheckedChanged]: checked " + checked);
-        recognizer.startListening("demoGrammar");
+        recognizer.startListening("grammar");
     }
 
     @Override
@@ -78,11 +89,6 @@ public class SimpleActivity extends Activity
         super.onDestroy();
     }
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
-	}
 
     @Override
     public void onBeginningOfSpeech() {
@@ -102,8 +108,7 @@ public class SimpleActivity extends Activity
     @Override
     public void onResult(Hypothesis hypothesis) {
         String message = hypothesis.getHypstr();
-        String uttid = hypothesis.getUttid();
-        Log.d(TAG, "[onResult]>>>  result: [" + uttid + "]: "+ message);
+        Log.d(TAG, "[onResult]>>>  result: "+ message);
 		TextView out = ((TextView) findViewById(R.id.outputText));
 		out.append(message + "\n");
     }

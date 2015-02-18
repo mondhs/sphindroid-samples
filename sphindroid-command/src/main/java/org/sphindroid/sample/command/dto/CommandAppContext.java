@@ -5,6 +5,7 @@ package org.sphindroid.sample.command.dto;
  */
 public class CommandAppContext {
     private boolean autoVad;
+    private boolean listening;
 
     public boolean getAutoVad() {
         return autoVad;
@@ -12,5 +13,13 @@ public class CommandAppContext {
 
     public void setAutoVad(boolean autoVad) {
         this.autoVad = autoVad;
+    }
+
+    public boolean getListening() {
+        return listening;
+    }
+
+    public void setListening(boolean listening) {
+        this.listening = listening;
     }
 }

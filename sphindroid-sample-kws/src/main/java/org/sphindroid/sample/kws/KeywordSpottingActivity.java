@@ -7,11 +7,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 import android.app.Activity;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import edu.cmu.pocketsphinx.Assets;
 import edu.cmu.pocketsphinx.Hypothesis;
@@ -38,29 +40,53 @@ public class KeywordSpottingActivity extends Activity implements
     @Override
     public void onCreate(Bundle state) {
         super.onCreate(state);
-        File appDir;
+        setContentView(R.layout.main);
 
-        try {
-            Assets assets = new Assets(KeywordSpottingActivity.this);
-            appDir = assets.syncAssets();
-        } catch (IOException e) {
-            Log.e(TAG,"syncAssets failed", e);
-                throw new RuntimeException("failed to synchronize assets", e);
-        }
+//        try {
+//            Assets assets = new Assets(KeywordSpottingActivity.this);
+//            appDir = assets.syncAssets();
+//        } catch (IOException e) {
+//            Log.e(TAG,"syncAssets failed", e);
+//                throw new RuntimeException("failed to synchronize assets", e);
+//        }
 
+        new AsyncTask<Void, Void, Exception>() {
+            @Override
+            protected Exception doInBackground(Void... params) {
+                try {
+                    Assets assets = new Assets(KeywordSpottingActivity.this);
+                    File assetDir = assets.syncAssets();
+                    setupRecognizer(assetDir);
+                } catch (IOException e) {
+                    return e;
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Exception result) {
+                if (result != null) {
+                    throw new IllegalArgumentException("Something bad happen");
+                } else {
+                    switchSearch(KWS_SEARCH_NAME);
+                }
+            }
+        }.execute();
+
+
+
+    }
+
+    private void setupRecognizer(File assetDir) throws IOException {
         recognizer = SpeechRecognizerSetup.defaultSetup()
-                .setAcousticModel(new File(appDir, "acoustic_model/lt_lt/hmm"))
-                .setDictionary(new File(appDir, "acoustic_model/lt_lt/dict/robotas.dict"))
+                .setAcousticModel(new File(assetDir, "acoustic_model/lt_lt/hmm"))
+                .setDictionary(new File(assetDir, "acoustic_model/lt_lt/dict/robotas.dict"))
                 //.setRawLogDir(appDir)
                 .setKeywordThreshold(1e-40f)
                 .getRecognizer();
-
         recognizer.addListener(this);
         // Create keyword-activation search.
         recognizer.addKeyphraseSearch(KWS_SEARCH_NAME, KEYPHRASE);
-
-        setContentView(R.layout.main);
-        switchSearch(KWS_SEARCH_NAME);
     }
 
     @Override

@@ -1,12 +1,8 @@
 package org.sphindroid.sample.command;
 
-import android.app.ActionBar;
-import android.app.ActionBar.Tab;
-import android.app.ActionBar.TabListener;
-import android.app.Activity;
-import android.app.Fragment;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -22,59 +18,83 @@ import java.io.IOException;
 import edu.cmu.pocketsphinx.Assets;
 import edu.cmu.pocketsphinx.SpeechRecognizer;
 import edu.cmu.pocketsphinx.SpeechRecognizerSetup;
+import android.support.v7.app.ActionBarActivity;
 
-public class MainDemoActivity extends Activity {
+public class MainDemoActivity extends ActionBarActivity {
 
-    protected static String KWS_SEARCH_NAME = "wakeup_search";
+    protected static String KWS_SEARCH = "wakeup";
     protected static String KEYPHRASE = "gerai berže";
-    private static final String TAG = MainDemoActivity.class.getName();
+    private static final String TAG = MainDemoActivity.class.getSimpleName();
 
 
-    private ActionBar tabBar;
+//    private ActionBar tabBar;
     private SpeechRecognizer recognizer;
     private CommandAppContext commandAppContext;
 
     @Override
-    public void onCreate(Bundle state) {
-        super.onCreate(state);
+    public void onCreate(final Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         Log.w(TAG, "[onCreate]");
         loadPreferences();
+        setContentView(R.layout.activity_main);
 
-        File appDir;
-        try {
-            Assets assets = new Assets(MainDemoActivity.this);
-            appDir = assets.syncAssets();
-        } catch (IOException e) {
-            Log.e(TAG, "IO Exception", e);
-            throw new RuntimeException(e);
+        new AsyncTask<Void, Void, Exception>() {
+            @Override
+            protected Exception doInBackground(Void... params) {
+                try {
+                    Assets assets = new Assets(MainDemoActivity.this);
+                    File assetDir = assets.syncAssets();
+                    setupRecognizer(assetDir);
+                } catch (IOException e) {
+                    return e;
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Exception result) {
+                if (result != null) {
+                    throw new IllegalArgumentException("Something bad happen");
+                } else {
+                    recognitionReady(savedInstanceState);
+                }
+            }
+        }.execute();
+
+
+    }
+
+    /**
+     *
+     * @param savedInstanceState
+     */
+    private void recognitionReady(Bundle savedInstanceState){
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.container, new DemonstrationFragment())
+                    .commit();
         }
+
+    }
+
+    /**
+     *
+     * @param assetDir
+     * @throws IOException
+     */
+    private void setupRecognizer(File assetDir) throws IOException {
         recognizer = SpeechRecognizerSetup.defaultSetup()
-                .setAcousticModel(new File(appDir, "acoustic_model/lt_lt/hmm"))
-                .setDictionary(new File(appDir, "acoustic_model/lt_lt/dict/demo.dict"))
-                //.setRawLogDir(appDir)
-                .setKeywordThreshold(1e-40f)
+                .setAcousticModel(new File(assetDir, "acoustic_model/lt_lt/hmm"))
+                .setDictionary(new File(assetDir, "acoustic_model/lt_lt/dict/lt_lt.dict"))
+                        //.setRawLogDir(appDir)
+                .setKeywordThreshold(1e-45f)
                 .getRecognizer();
 
-//        recognizer.addListener(this);
-
-        recognizer.addKeyphraseSearch(KWS_SEARCH_NAME, KEYPHRASE);
-
-        File demoGrammar = new File(appDir, "acoustic_model/lt_lt/lm/demo.gram");
-
-        recognizer.addGrammarSearch(GeneralFragment.class.getSimpleName(), demoGrammar);
-
-
-        tabBar = getActionBar();
-        tabBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-
-        Tab t = tabBar.newTab();
-        t.setText("Pokalbis");
-        t.setTabListener(newTabListener(GeneralFragment.class, state));
-        tabBar.addTab(t);
-
-
-        if (null != state)
-            tabBar.setSelectedNavigationItem(state.getInt("tab", 0));
+        File demoGrammar = new File(assetDir, "acoustic_model/lt_lt/lm/demo_lt.gram");
+        recognizer.addGrammarSearch(DemonstrationFragment.class.getSimpleName(), demoGrammar);
+        // Create keyword-activation search.
+        recognizer.addKeyphraseSearch(KWS_SEARCH, KEYPHRASE);
+        getCommandAppContext().setListening(false);
     }
 
    /**
@@ -106,7 +126,7 @@ public class MainDemoActivity extends Activity {
     }
 
     private void loadPreferences() {
-        Log.w(TAG, "[loadPreferences]");
+        Log.d(TAG, "[loadPreferences]");
         if(this.commandAppContext  == null){
             this.commandAppContext = new CommandAppContext();
         }
@@ -121,13 +141,10 @@ public class MainDemoActivity extends Activity {
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putInt("tab", tabBar.getSelectedNavigationIndex());
+//        outState.putInt("tab", tabBar.getSelectedNavigationIndex());
         super.onSaveInstanceState(outState);
     }
 
-    <T extends Fragment> TabListener newTabListener(Class<T> c, Bundle state) {
-        return new TabFragmentListener<T>(this, c.getSimpleName(), c, state);
-    }
 
     public CommandAppContext getCommandAppContext() {
         return commandAppContext;

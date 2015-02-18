@@ -1,11 +1,5 @@
-apply plugin: 'android'
-
-dependencies {
-    compile ('edu.cmu.pocketsphinx.lib:pocketsphinx-android-jni:0.8.6@jar')
-    compile ('edu.cmu.pocketsphinx.lib:pocketsphinx-android-lib:0.8.6@aar')
-    compile ('org.sphindroid.model:sphindroid-am-lt_lt:0.4.2@aar')
-    compile ('org.sphindroid:sphindroid-api:0.4.1@jar')
-}
+import java.security.MessageDigest
+apply plugin: 'com.android.application'
 
 
 android {
@@ -18,6 +12,72 @@ android {
         versionCode 1
         versionName "1.0"
     }
+    sourceSets {
+        main.assets.srcDirs = ['build/gen-assets']
+    }
+
 }
 
 
+dependencies {
+    compile ('edu.cmu.pocketsphinx.lib:pocketsphinx-android-jni:0.8.7@jar')
+    compile ('edu.cmu.pocketsphinx.lib:pocketsphinx-android-lib:0.8.7@aar')
+    compile ('org.sphindroid.model:sphindroid-am-lt_lt:0.4.3@aar')
+    compile ('org.sphindroid:sphindroid-api:0.4.2@jar')
+    compile ('com.android.support:appcompat-v7:21.0.3')
+    compile ('org.slf4j:slf4j-android:1.7.10')
+}
+
+task indexAssets() {
+    description 'Index Build Variant assets for faster lookup by AssetManager later'
+    ext {
+        assetGenDir = new File('build/gen-assets/sync')
+        sha1 = MessageDigest.getInstance("SHA-1");
+        assetIndexFile = new File(assetGenDir, "assets.lst")
+    }
+    doLast {
+        assetIndexFile.getParentFile().mkdirs()
+        assetIndexFile.delete()
+        assetIndexFile.createNewFile()
+        logger.quiet "[indexAssets]"
+        copy {
+            exclude('**/*.md5', "assets.lst")
+            from('src/main/assets_org/sync') {
+                include '**/*'
+            }
+            //from('build/intermediates/exploded-aar/') {
+            //    include 'org.sphindroid.model/*/*/assets/sync/**/*'
+            //}
+            into assetGenDir
+            eachFile { fileCopyDetails ->
+                logger.quiet("Processing: " + fileCopyDetails.file.absolutePath)
+                if(!fileCopyDetails.isDirectory()) {
+                    assetIndexFile.append("${fileCopyDetails.relativePath}" + "\n")
+                    ant.checksum todir: new File(assetGenDir, fileCopyDetails.relativePath.parent.pathString), file: fileCopyDetails.getFile().getAbsolutePath(), algorithm:"md5"
+
+                }
+            }
+        }
+        FileTree tree = fileTree(dir: 'build/intermediates/exploded-aar/')
+        tree.exclude '**/assets.lst',"**/*.md5"
+        tree.include 'org.sphindroid.model/*/*/assets/sync/**/*'
+
+        tree.each {File file ->
+            def testName = file.absolutePath.replaceAll(".*assets/sync/","")
+            assetIndexFile.append("${testName}" + "\n")
+        }
+
+
+    }
+}
+
+task testsAssets() {
+    doLast {
+        println("Testas")
+    }
+}
+
+android.applicationVariants.all { variant ->
+    variant.preBuild.dependsOn testsAssets
+    variant.generateBuildConfig.dependsOn indexAssets
+}
